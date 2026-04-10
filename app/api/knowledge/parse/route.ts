@@ -1,10 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
 import Anthropic from '@anthropic-ai/sdk'
-
-// GET /api/knowledge/parse — AI機能の有効/無効を返す
-export async function GET() {
-  return NextResponse.json({ available: !!process.env.ANTHROPIC_API_KEY })
-}
 import { ITEMS } from '@/lib/data'
 import type { KnowledgeCreatePayload, KnowledgeType, DiagLevel } from '@/types'
 
@@ -45,6 +40,11 @@ ${ITEM_NAMES.join('\n')}
 
 JSONのみを返してください。前後に説明文や\`\`\`は不要です。`
 
+// GET /api/knowledge/parse — AI機能の有効/無効を返す
+export async function GET() {
+  return NextResponse.json({ available: !!process.env.ANTHROPIC_API_KEY })
+}
+
 export async function POST(req: NextRequest) {
   try {
     const { text } = await req.json()
@@ -60,9 +60,8 @@ export async function POST(req: NextRequest) {
     const client = new Anthropic({ apiKey })
 
     const message = await client.messages.create({
-      model: 'claude-opus-4-6',
+      model: 'claude-3-5-sonnet-20241022',
       max_tokens: 1024,
-      thinking: { type: 'adaptive' },
       system: SYSTEM_PROMPT,
       messages: [
         {
