@@ -34,6 +34,24 @@ export default function Home() {
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-4">
+      {/* Header */}
+      <div className="flex items-center gap-3 mb-5">
+        <div className="w-7 h-7 rounded-lg bg-[#1a1a1a] flex items-center justify-center shrink-0">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+            <circle cx="7" cy="7" r="5" stroke="white" strokeWidth="1.5"/>
+            <line x1="7" y1="2" x2="7" y2="4" stroke="white" strokeWidth="1.5" strokeLinecap="round"/>
+            <line x1="7" y1="10" x2="7" y2="12" stroke="white" strokeWidth="1.5" strokeLinecap="round"/>
+            <line x1="2" y1="7" x2="4" y2="7" stroke="white" strokeWidth="1.5" strokeLinecap="round"/>
+            <line x1="10" y1="7" x2="12" y2="7" stroke="white" strokeWidth="1.5" strokeLinecap="round"/>
+            <circle cx="7" cy="7" r="1.5" fill="white"/>
+          </svg>
+        </div>
+        <div>
+          <div className="text-[17px] font-bold tracking-tight text-[#1a1a1a] leading-none">TA COMPASS</div>
+          <div className="text-[10px] text-[#aaa] tracking-widest uppercase mt-0.5">Talent Acquisition Health Check</div>
+        </div>
+      </div>
+
       {/* Navigation */}
       <nav className="flex gap-0 border-b border-[#e0ddd6] mb-6 overflow-x-auto">
         {TABS.map((label, i) => (
