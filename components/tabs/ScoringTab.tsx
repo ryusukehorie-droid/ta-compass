@@ -1,0 +1,221 @@
+'use client'
+
+import { useState, useEffect } from 'react'
+import { ITEMS, CATS, getLevelLabel } from '@/lib/data'
+import RadarChart from '@/components/RadarChart'
+import type { ScoreValue, KnowledgeEntry } from '@/types'
+
+const CAT_MAX = [6, 15, 6, 6]
+const SCORE_LABEL = ['未評価', 'BAD', 'GOOD', 'EXC'] as const
+const SCORE_LEVEL_MAP = ['', 'BAD', 'SOSO', 'GOOD', 'EXC'] as const
+
+// BAD(1) または SOSO(2) の項目に対して関連ナレッジを取得・表示
+function RelatedKnowledge({ scores }: { scores: ScoreValue[] }) {
+  const [entries, setEntries] = useState<KnowledgeEntry[]>([])
+  const [loading, setLoading] = useState(false)
+
+  // BAD/SOSOの項目インデックス一覧
+  const weakItems = scores
+    .map((v, i) => ({ v, i }))
+    .filter(({ v }) => v === 1 || v === 2)
+
+  useEffect(() => {
+    if (weakItems.length === 0) { setEntries([]); return }
+    setLoading(true)
+    // 全BAD/SOSO項目をまとめて取得（最初の3項目に絞ってリクエスト数を抑える）
+    const targets = weakItems.slice(0, 3)
+    Promise.all(
+      targets.map(({ i }) =>
+        fetch(`/api/knowledge?item=${i}`).then((r) => r.json() as Promise<KnowledgeEntry[]>)
+      )
+    ).then((results) => {
+      const seen = new Set<string>()
+      const merged: KnowledgeEntry[] = []
+      results.flat().forEach((e) => { if (!seen.has(e.id)) { seen.add(e.id); merged.push(e) } })
+      setEntries(merged.slice(0, 6))
+    }).finally(() => setLoading(false))
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [scores.join(',')])
+
+  if (weakItems.length === 0) return null
+
+  return (
+    <div className="mt-6">
+      <div className="text-[11px] font-medium tracking-widest text-[#888] uppercase mb-2">
+        関連ナレッジ（BAD / SOSO 項目）
+      </div>
+      <div className="flex flex-wrap gap-1.5 mb-3">
+        {weakItems.map(({ v, i }) => (
+          <span key={i} className={`text-[10px] font-medium px-2 py-0.5 rounded-lg ${
+            v === 1 ? 'bg-[#FCEBEB] text-[#791F1F]' : 'bg-[#FFF3CC] text-[#7A5500]'
+          }`}>
+            {SCORE_LEVEL_MAP[v]} : {ITEMS[i].name}
+          </span>
+        ))}
+      </div>
+      {loading && <div className="text-[12px] text-[#aaa]">読み込み中...</div>}
+      {!loading && entries.length === 0 && (
+        <div className="text-[12px] text-[#aaa] bg-[#f7f6f3] rounded-lg px-3 py-2">
+          関連ナレッジがまだありません。「ナレッジDB」タブから追加できます。
+        </div>
+      )}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+        {entries.map((e) => (
+          <div key={e.id} className="border border-[#e8e6e0] rounded-xl p-3 bg-white">
+            <div className="flex items-center gap-1.5 mb-1">
+              <span className="text-[9px] font-medium px-1.5 py-0.5 rounded bg-[#EEEDFE] text-[#3C3489]">{e.type}</span>
+              {e.company && <span className="text-[9px] text-[#aaa]">{e.company}</span>}
+            </div>
+            <div className="text-[12px] font-medium mb-1 leading-snug">{e.title}</div>
+            <p className="text-[11px] text-[#555] leading-relaxed line-clamp-2">{e.body}</p>
+            {e.sourceUrl && (
+              <a href={e.sourceUrl} target="_blank" rel="noopener noreferrer"
+                className="inline-block mt-1 text-[10px] text-[#378ADD]">
+                {e.sourceName ?? 'ソース'} →
+              </a>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+interface Props {
+  scores: ScoreValue[]
+  onChange: (scores: ScoreValue[]) => void
+}
+
+export default function ScoringTab({ scores, onChange }: Props) {
+  const totals: number[] = [0, 0, 0, 0]
+  const counts: number[] = [0, 0, 0, 0]
+  let grand = 0
+  scores.forEach((v, i) => {
+    if (v > 0) { totals[ITEMS[i].cat] += v; counts[ITEMS[i].cat]++; grand += v }
+  })
+
+  const m1 = scores[0], m2 = scores[1]
+  const warn = (m1 === 1 || m2 === 1)
+
+  let levelColor = '#888'
+  if (grand > 0) {
+    if (grand <= 17) levelColor = '#A32D2D'
+    else if (grand <= 22) levelColor = '#534AB7'
+    else levelColor = '#0F6E56'
+  }
+
+  const setScore = (i: number, v: ScoreValue) => {
+    const next = [...scores] as ScoreValue[]
+    next[i] = v
+    onChange(next)
+  }
+  const reset = () => onChange(new Array(ITEMS.length).fill(0) as ScoreValue[])
+
+  let prevCat = -1
+  const rows: React.ReactNode[] = []
+  ITEMS.forEach((it, i) => {
+    if (it.cat !== prevCat) {
+      rows.push(
+        <div key={`cat-${it.cat}`} className="grid" style={{ gridTemplateColumns: '2fr 72px 72px 72px 72px' }}>
+          <div className="col-span-5 text-[11px] font-medium tracking-wide text-[#888] px-2 py-1.5 bg-[#f7f6f3] border-b border-[#e8e6e0]">
+            {CATS[it.cat]}
+          </div>
+        </div>
+      )
+      prevCat = it.cat
+    }
+    rows.push(
+      <div
+        key={i}
+        className="grid border-b border-[#f0ede8] items-center hover:bg-[#fafaf8]"
+        style={{ gridTemplateColumns: '2fr 72px 72px 72px 72px' }}
+      >
+        <div className="px-2 py-1.5 text-[12px] leading-snug">
+          {it.name}
+          <div className="text-[10px] text-[#aaa] mt-0.5">{it.sub}</div>
+        </div>
+        {([1, 2, 3, 0] as const).map((v) => (
+          <div key={v} className="flex justify-center py-1.5">
+            <input
+              type="radio"
+              name={`r${i}`}
+              checked={scores[i] === v}
+              onChange={() => setScore(i, v)}
+              className="w-[15px] h-[15px] cursor-pointer accent-[#534AB7]"
+            />
+          </div>
+        ))}
+      </div>
+    )
+  })
+
+  return (
+    <div>
+      <div className="text-[11px] font-medium tracking-widest text-[#888] uppercase mb-3">
+        スコアリングシート — BAD=1 / GOOD=2 / EXCELLENT=3
+      </div>
+
+      {/* Header */}
+      <div className="grid mb-1" style={{ gridTemplateColumns: '2fr 72px 72px 72px 72px' }}>
+        <div className="text-[11px] font-medium text-[#888] px-2 py-1">診断項目</div>
+        {['BAD\n1点', 'GOOD\n2点', 'EXC\n3点', '未評価'].map((h) => (
+          <div key={h} className="text-[11px] font-medium text-[#888] py-1 text-center whitespace-pre-line leading-tight">{h}</div>
+        ))}
+      </div>
+
+      {rows}
+
+      {/* Score summary */}
+      <div className="mt-4 bg-[#f7f6f3] rounded-xl p-4">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-4">
+          {CATS.map((name, c) => (
+            <div key={c} className="bg-white border border-[#e8e6e0] rounded-lg p-2 text-center">
+              <div className="text-[10px] text-[#888] mb-0.5">{name}</div>
+              <div className="text-[17px] font-medium">{counts[c] > 0 ? totals[c] : '—'}</div>
+              <div className="text-[10px] text-[#aaa]">/{CAT_MAX[c]}</div>
+            </div>
+          ))}
+        </div>
+
+        <div className="text-[11px] text-[#888] mb-1">総合スコア</div>
+        <div className="h-2 bg-[#e0ddd6] rounded-full overflow-hidden mb-1">
+          <div
+            className="h-full bg-[#534AB7] rounded-full transition-all duration-300"
+            style={{ width: grand ? `${(grand / 33) * 100}%` : '0%' }}
+          />
+        </div>
+        <div className="flex justify-between text-[10px] text-[#aaa] mb-2">
+          <span>0</span><span>11</span><span>22</span><span>33点</span>
+        </div>
+        <div className="text-[13px] font-medium text-center mb-1" style={{ color: levelColor }}>
+          {grand > 0 ? `合計 ${grand}点 / 33点 ｜ ${getLevelLabel(grand)}` : '—'}
+        </div>
+        {warn && grand > 0 && (
+          <div className="text-[11px] text-center text-[#A32D2D]">⚑ 経営アラインメント要注意</div>
+        )}
+        <button
+          onClick={reset}
+          className="mt-3 w-full py-1.5 text-[12px] border border-[#ccc] rounded-lg bg-transparent text-[#888] hover:bg-[#f7f6f3] cursor-pointer"
+        >
+          リセット
+        </button>
+      </div>
+
+      {/* Radar chart */}
+      <div className="mt-6">
+        <div className="text-[11px] font-medium tracking-widest text-[#888] uppercase mb-3">レーダーチャート</div>
+        <div className="flex gap-4 items-center mb-3 text-[11px] text-[#888] flex-wrap">
+          <span className="flex items-center gap-1.5">
+            <span className="inline-block w-6 h-0.5 bg-[#534AB7] rounded" />現在のスコア
+          </span>
+          <span className="text-[#aaa]">— スコアを入力するとチャートが更新されます</span>
+        </div>
+        <div className="flex justify-center">
+          <RadarChart scores={scores} />
+        </div>
+      </div>
+
+      <RelatedKnowledge scores={scores} />
+    </div>
+  )
+}
