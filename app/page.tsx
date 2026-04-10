@@ -13,6 +13,7 @@ import HearingTab    from '@/components/tabs/HearingTab'
 import KnowledgeTab  from '@/components/tabs/KnowledgeTab'
 import NotionTab     from '@/components/tabs/NotionTab'
 import NextTab       from '@/components/tabs/NextTab'
+import ChatPanel     from '@/components/ChatPanel'
 
 const TABS = [
   '1. 全体像',
@@ -79,6 +80,8 @@ export default function Home() {
       {tab === 6 && <KnowledgeTab />}
       {tab === 7 && <NotionTab scores={scores} />}
       {tab === 8 && <NextTab />}
+
+      <ChatPanel />
     </div>
   )
 }
