@@ -160,10 +160,15 @@ export default function RadarChart({ scores, compareScores, company, date, compa
     }
 
     // Category arc labels
-    const clR = sR2 + 14
+    // 各カテゴリの角度を項目ラベルとの重なりを避けるようにオフセット
+    // cat0(items0-1): 項目1方向から離すため反時計回りにシフト
+    // cat1(items2-6): 中点がちょうどitem4(パイプライン)の軸上に来るため時計回りにシフト
+    const step = (Math.PI * 2) / n
+    const CAT_ANG_OFFSET = [-step * 0.35, step * 0.6, 0, 0]
+    const clR = sR2 + 28
     for (let ci = 0; ci < 4; ci++) {
       const { s, e } = CAT_RANGES[ci]
-      const mA = (ang(s) + ang(e)) / 2
+      const mA = (ang(s) + ang(e)) / 2 + CAT_ANG_OFFSET[ci]
       const clx = cx + clR * Math.cos(mA), cly = cy + clR * Math.sin(mA)
       const clines = CAT_LABEL_TEXT[ci].split('\n'), cfs = 9, clh = cfs + 2
       const cth = clines.length * clh
@@ -171,7 +176,7 @@ export default function RadarChart({ scores, compareScores, company, date, compa
       const ca: CanvasTextAlign = Math.abs(cosM) < 0.25 ? 'center' : cosM > 0 ? 'left' : 'right'
       ctx.font = `bold ${cfs}px sans-serif`
       let mw = 0; clines.forEach((l) => { const w = ctx.measureText(l).width; if (w > mw) mw = w })
-      const pad = 5, bw2 = mw + pad * 2, bh2 = cth + pad
+      const pad = 4, bw2 = mw + pad * 2, bh2 = cth + pad
       const cby = cly - cth / 2 + cfs / 2
       const bx2 = ca === 'center' ? clx - bw2 / 2 : ca === 'left' ? clx - pad : clx - bw2 + pad
       const by2 = cby - cfs - pad / 2
