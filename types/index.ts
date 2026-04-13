@@ -21,7 +21,7 @@ export interface CaseEntry {
 
 export type CompanyName = 'LayerX' | 'ログラス' | 'ナレッジワーク' | 'メルカリ' | 'SmartHR' | 'freee'
 
-export type ScoreValue = 0 | 1 | 2 | 3
+export type ScoreValue = 0 | 1 | 2 | 3 | 4
 
 export interface ScoreState {
   scores: ScoreValue[]

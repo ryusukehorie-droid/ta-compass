@@ -5,16 +5,26 @@ import { ITEMS, CATS, getLevelLabel } from '@/lib/data'
 import RadarChart from '@/components/RadarChart'
 import type { ScoreValue, KnowledgeEntry } from '@/types'
 
-const CAT_MAX = [6, 15, 6, 6]
-const SCORE_LABEL = ['未評価', 'BAD', 'GOOD', 'EXC'] as const
+// 4段階 × 11項目 = 44点満点
+const CAT_MAX = [8, 20, 8, 8]
 const SCORE_LEVEL_MAP = ['', 'BAD', 'SOSO', 'GOOD', 'EXC'] as const
 
-// BAD(1) または SOSO(2) の項目に対して関連ナレッジを取得・表示
+// ヘッダー列定義（値, ラベル, 色）
+const SCORE_COLS: { v: ScoreValue; label: string; color: string }[] = [
+  { v: 1, label: 'BAD\n1点',  color: '#A32D2D' },
+  { v: 2, label: 'SOSO\n2点', color: '#7A5500' },
+  { v: 3, label: 'GOOD\n3点', color: '#27500A' },
+  { v: 4, label: 'EXC\n4点',  color: '#085041' },
+  { v: 0, label: '未評価',    color: '#aaa'    },
+]
+
+const COL_TEMPLATE = '2fr 62px 62px 62px 62px 62px'
+
+// ── 関連ナレッジ ───────────────────────────────────────────────────
 function RelatedKnowledge({ scores }: { scores: ScoreValue[] }) {
   const [entries, setEntries] = useState<KnowledgeEntry[]>([])
   const [loading, setLoading] = useState(false)
 
-  // BAD/SOSOの項目インデックス一覧
   const weakItems = scores
     .map((v, i) => ({ v, i }))
     .filter(({ v }) => v === 1 || v === 2)
@@ -22,7 +32,6 @@ function RelatedKnowledge({ scores }: { scores: ScoreValue[] }) {
   useEffect(() => {
     if (weakItems.length === 0) { setEntries([]); return }
     setLoading(true)
-    // 全BAD/SOSO項目をまとめて取得（最初の3項目に絞ってリクエスト数を抑える）
     const targets = weakItems.slice(0, 3)
     Promise.all(
       targets.map(({ i }) =>
@@ -49,7 +58,7 @@ function RelatedKnowledge({ scores }: { scores: ScoreValue[] }) {
           <span key={i} className={`text-[10px] font-medium px-2 py-0.5 rounded-lg ${
             v === 1 ? 'bg-[#FCEBEB] text-[#791F1F]' : 'bg-[#FFF3CC] text-[#7A5500]'
           }`}>
-            {SCORE_LEVEL_MAP[v]} : {ITEMS[i].name}
+            {SCORE_LEVEL_MAP[v]} : {String(i + 1).padStart(2, '0')}. {ITEMS[i].name}
           </span>
         ))}
       </div>
@@ -81,6 +90,7 @@ function RelatedKnowledge({ scores }: { scores: ScoreValue[] }) {
   )
 }
 
+// ── メイン ────────────────────────────────────────────────────────
 interface Props {
   scores: ScoreValue[]
   onChange: (scores: ScoreValue[]) => void
@@ -99,8 +109,9 @@ export default function ScoringTab({ scores, onChange }: Props) {
 
   let levelColor = '#888'
   if (grand > 0) {
-    if (grand <= 17) levelColor = '#A32D2D'
-    else if (grand <= 22) levelColor = '#534AB7'
+    if (grand <= 14) levelColor = '#A32D2D'
+    else if (grand <= 22) levelColor = '#7A5500'
+    else if (grand <= 30) levelColor = '#534AB7'
     else levelColor = '#0F6E56'
   }
 
@@ -116,8 +127,8 @@ export default function ScoringTab({ scores, onChange }: Props) {
   ITEMS.forEach((it, i) => {
     if (it.cat !== prevCat) {
       rows.push(
-        <div key={`cat-${it.cat}`} className="grid" style={{ gridTemplateColumns: '2fr 72px 72px 72px 72px' }}>
-          <div className="col-span-5 text-[11px] font-medium tracking-wide text-[#888] px-2 py-1.5 bg-[#f7f6f3] border-b border-[#e8e6e0]">
+        <div key={`cat-${it.cat}`} className="grid" style={{ gridTemplateColumns: COL_TEMPLATE }}>
+          <div className="col-span-6 text-[11px] font-medium tracking-wide text-[#888] px-2 py-1.5 bg-[#f7f6f3] border-b border-[#e8e6e0]">
             {CATS[it.cat]}
           </div>
         </div>
@@ -128,13 +139,14 @@ export default function ScoringTab({ scores, onChange }: Props) {
       <div
         key={i}
         className="grid border-b border-[#f0ede8] items-center hover:bg-[#fafaf8]"
-        style={{ gridTemplateColumns: '2fr 72px 72px 72px 72px' }}
+        style={{ gridTemplateColumns: COL_TEMPLATE }}
       >
         <div className="px-2 py-1.5 text-[12px] leading-snug">
+          <span className="text-[10px] text-[#aaa] mr-1">{String(i + 1).padStart(2, '0')}.</span>
           {it.name}
           <div className="text-[10px] text-[#aaa] mt-0.5">{it.sub}</div>
         </div>
-        {([1, 2, 3, 0] as const).map((v) => (
+        {SCORE_COLS.map(({ v }) => (
           <div key={v} className="flex justify-center py-1.5">
             <input
               type="radio"
@@ -152,20 +164,26 @@ export default function ScoringTab({ scores, onChange }: Props) {
   return (
     <div>
       <div className="text-[11px] font-medium tracking-widest text-[#888] uppercase mb-3">
-        スコアリングシート — BAD=1 / GOOD=2 / EXCELLENT=3
+        スコアリングシート — BAD=1 / SOSO=2 / GOOD=3 / EXCELLENT=4
       </div>
 
-      {/* Header */}
-      <div className="grid mb-1" style={{ gridTemplateColumns: '2fr 72px 72px 72px 72px' }}>
+      {/* ヘッダー */}
+      <div className="grid mb-1" style={{ gridTemplateColumns: COL_TEMPLATE }}>
         <div className="text-[11px] font-medium text-[#888] px-2 py-1">診断項目</div>
-        {['BAD\n1点', 'GOOD\n2点', 'EXC\n3点', '未評価'].map((h) => (
-          <div key={h} className="text-[11px] font-medium text-[#888] py-1 text-center whitespace-pre-line leading-tight">{h}</div>
+        {SCORE_COLS.map(({ v, label, color }) => (
+          <div
+            key={v}
+            className="text-[11px] font-medium py-1 text-center whitespace-pre-line leading-tight"
+            style={{ color }}
+          >
+            {label}
+          </div>
         ))}
       </div>
 
       {rows}
 
-      {/* Score summary */}
+      {/* スコアサマリー */}
       <div className="mt-4 bg-[#f7f6f3] rounded-xl p-4">
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-4">
           {CATS.map((name, c) => (
@@ -181,14 +199,14 @@ export default function ScoringTab({ scores, onChange }: Props) {
         <div className="h-2 bg-[#e0ddd6] rounded-full overflow-hidden mb-1">
           <div
             className="h-full bg-[#534AB7] rounded-full transition-all duration-300"
-            style={{ width: grand ? `${(grand / 33) * 100}%` : '0%' }}
+            style={{ width: grand ? `${(grand / 44) * 100}%` : '0%' }}
           />
         </div>
         <div className="flex justify-between text-[10px] text-[#aaa] mb-2">
-          <span>0</span><span>11</span><span>22</span><span>33点</span>
+          <span>0</span><span>11</span><span>22</span><span>33</span><span>44点</span>
         </div>
         <div className="text-[13px] font-medium text-center mb-1" style={{ color: levelColor }}>
-          {grand > 0 ? `合計 ${grand}点 / 33点 ｜ ${getLevelLabel(grand)}` : '—'}
+          {grand > 0 ? `合計 ${grand}点 / 44点 ｜ ${getLevelLabel(grand)}` : '—'}
         </div>
         {warn && grand > 0 && (
           <div className="text-[11px] text-center text-[#A32D2D]">⚑ 経営アラインメント要注意</div>
@@ -201,7 +219,7 @@ export default function ScoringTab({ scores, onChange }: Props) {
         </button>
       </div>
 
-      {/* Radar chart */}
+      {/* レーダーチャート */}
       <div className="mt-6">
         <div className="text-[11px] font-medium tracking-widest text-[#888] uppercase mb-3">レーダーチャート</div>
         <div className="flex gap-4 items-center mb-3 text-[11px] text-[#888] flex-wrap">

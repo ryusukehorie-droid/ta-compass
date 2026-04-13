@@ -271,9 +271,9 @@ export const CASES: Record<CompanyName, CaseEntry[]> = {
 }
 
 export function getLevelLabel(grand: number): string {
-  if (grand <= 11) return 'Lv.1 リアクティブ（未整備）'
-  if (grand <= 17) return 'Lv.1〜2 移行期'
-  if (grand <= 22) return 'Lv.2 標準化フェーズ'
-  if (grand <= 28) return 'Lv.3 プロアクティブ移行期'
+  if (grand <= 14) return 'Lv.1 リアクティブ（未整備）'
+  if (grand <= 22) return 'Lv.1〜2 移行期'
+  if (grand <= 30) return 'Lv.2 標準化フェーズ'
+  if (grand <= 38) return 'Lv.3 プロアクティブ移行期'
   return 'Lv.3〜4 戦略的・競争優位'
 }

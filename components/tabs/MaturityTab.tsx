@@ -9,21 +9,35 @@ export default function MaturityTab() {
       </div>
       <div className="overflow-x-auto">
         <table className="w-full border-collapse text-[11px]">
-          <thead>
+          <thead className="sticky top-0 z-10">
             <tr>
-              <th className="py-2 px-2 text-left font-medium text-[#888] border-b border-[#e0ddd6] bg-[#f7f6f3] w-[16%]">診断項目</th>
-              <th className="py-2 px-2 text-center font-medium text-[#888] border-b border-[#e0ddd6] bg-[#f7f6f3] w-[9%]">カテゴリ</th>
+              <th className="py-2 px-2 text-left font-medium text-[#888] border-b border-[#e0ddd6] bg-[#f7f6f3] w-[14%]">
+                診断項目
+              </th>
+              <th className="py-2 px-2 text-center font-medium text-[#888] border-b border-[#e0ddd6] bg-[#f7f6f3] w-[8%]">
+                カテゴリ
+              </th>
               <th className="py-2 px-2 text-left font-medium text-[#888] border-b border-[#e0ddd6] bg-[#f7f6f3] w-[18%]">
                 <span className="inline-block bg-[#FCEBEB] text-[#791F1F] rounded px-1.5 py-0.5">BAD（Lv.1）</span>
               </th>
-              <th className="py-2 px-2 text-left font-medium text-[#888] border-b border-[#e0ddd6] bg-[#f7f6f3] w-[19%]">
+              <th className="py-2 px-2 text-left font-medium text-[#888] border-b border-[#e0ddd6] bg-[#f7f6f3] w-[18%]">
                 <span className="inline-block bg-[#FFF3CC] text-[#7A5500] rounded px-1.5 py-0.5">SOSO（Lv.2）</span>
               </th>
-              <th className="py-2 px-2 text-left font-medium text-[#888] border-b border-[#e0ddd6] bg-[#f7f6f3] w-[19%]">
-                <span className="inline-block bg-[#EAF3DE] text-[#27500A] rounded px-1.5 py-0.5">GOOD（Lv.3）</span>
+              <th className="py-2 px-2 text-left font-medium text-[#888] border-b border-[#e0ddd6] bg-[#f7f6f3] w-[21%]">
+                <div className="flex flex-col gap-1">
+                  <span className="inline-block bg-[#EAF3DE] text-[#27500A] rounded px-1.5 py-0.5 self-start">GOOD（Lv.3）</span>
+                  <span className="text-[9px] text-[#27500A] bg-[#EAF3DE] rounded px-1.5 py-0.5 self-start font-normal">
+                    👤 主にCEOがドライブ
+                  </span>
+                </div>
               </th>
-              <th className="py-2 px-2 text-left font-medium text-[#888] border-b border-[#e0ddd6] bg-[#f7f6f3] w-[19%]">
-                <span className="inline-block bg-[#E1F5EE] text-[#085041] rounded px-1.5 py-0.5">EXCELLENT（Lv.4）</span>
+              <th className="py-2 px-2 text-left font-medium text-[#888] border-b border-[#e0ddd6] bg-[#f7f6f3] w-[21%]">
+                <div className="flex flex-col gap-1">
+                  <span className="inline-block bg-[#E1F5EE] text-[#085041] rounded px-1.5 py-0.5 self-start">EXCELLENT（Lv.4）</span>
+                  <span className="text-[9px] text-[#085041] bg-[#E1F5EE] rounded px-1.5 py-0.5 self-start font-normal">
+                    👥 経営陣全体でドライブ
+                  </span>
+                </div>
               </th>
             </tr>
           </thead>
@@ -31,7 +45,8 @@ export default function MaturityTab() {
             {ITEMS.map((it, i) => (
               <tr key={i} className="hover:bg-[#fafaf8]">
                 <td className="py-2 px-2 border-b border-[#f0ede8] align-top">
-                  <div className="font-medium text-[12px]">{it.name}</div>
+                  <span className="text-[9px] text-[#bbb] mr-0.5">{String(i + 1).padStart(2, '0')}.</span>
+                  <span className="font-medium text-[12px]">{it.name}</span>
                   <div className="text-[10px] text-[#aaa] mt-0.5">{it.sub}</div>
                 </td>
                 <td className="py-2 px-2 border-b border-[#f0ede8] align-top text-center">
