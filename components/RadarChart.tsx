@@ -161,10 +161,10 @@ export default function RadarChart({ scores, compareScores, company, date, compa
 
     // Category arc labels
     // 各カテゴリの角度を項目ラベルとの重なりを避けるようにオフセット
-    // cat0(items0-1): 項目1方向から離すため反時計回りにシフト
+    // cat0(items0-1): 時計回りにシフトして項目ラベルとの重なりを回避
     // cat1(items2-6): 中点がちょうどitem4(パイプライン)の軸上に来るため時計回りにシフト
     const step = (Math.PI * 2) / n
-    const CAT_ANG_OFFSET = [-step * 0.35, step * 0.6, 0, 0]
+    const CAT_ANG_OFFSET = [step * 0.3, step * 0.6, 0, 0]
     const clR = sR2 + 28
     for (let ci = 0; ci < 4; ci++) {
       const { s, e } = CAT_RANGES[ci]
