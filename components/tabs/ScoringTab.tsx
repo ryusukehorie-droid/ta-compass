@@ -97,11 +97,18 @@ interface Props {
 }
 
 export default function ScoringTab({ scores, onChange }: Props) {
+  // 会社名・日付
+  const today = new Date().toISOString().slice(0, 10)
+  const [company, setCompany] = useState('')
+  const [date, setDate] = useState(today)
+
   // 比較モード
   const [showCompare, setShowCompare] = useState(false)
   const [compareScores, setCompareScores] = useState<ScoreValue[]>(
     new Array(ITEMS.length).fill(0) as ScoreValue[]
   )
+  const [compareCompany, setCompareCompany] = useState('')
+  const [compareDate, setCompareDate] = useState(today)
 
   const totals: number[] = [0, 0, 0, 0]
   const counts: number[] = [0, 0, 0, 0]
@@ -175,6 +182,28 @@ export default function ScoringTab({ scores, onChange }: Props) {
 
   return (
     <div>
+      {/* 会社名・日付 */}
+      <div className="flex flex-wrap gap-2 mb-4">
+        <div className="flex-1 min-w-[160px]">
+          <div className="text-[10px] text-[#aaa] mb-1">会社名</div>
+          <input
+            value={company}
+            onChange={(e) => setCompany(e.target.value)}
+            placeholder="例：株式会社〇〇"
+            className="w-full px-2.5 py-1.5 border border-[#e0ddd6] rounded-lg text-[12px] outline-none focus:border-[#534AB7]"
+          />
+        </div>
+        <div>
+          <div className="text-[10px] text-[#aaa] mb-1">スコアリング日</div>
+          <input
+            type="date"
+            value={date}
+            onChange={(e) => setDate(e.target.value)}
+            className="px-2.5 py-1.5 border border-[#e0ddd6] rounded-lg text-[12px] outline-none focus:border-[#534AB7] bg-white"
+          />
+        </div>
+      </div>
+
       <div className="flex items-center justify-between mb-3">
         <div className="text-[11px] font-medium tracking-widest text-[#888] uppercase">
           スコアリングシート — BAD=1 / SOSO=2 / GOOD=3 / EXCELLENT=4
@@ -206,10 +235,30 @@ export default function ScoringTab({ scores, onChange }: Props) {
       {/* 比較スコア（beforeテーブル） */}
       {showCompare && (
         <div className="mt-5">
-          <div className="flex items-center gap-2 mb-2">
-            <span className="inline-block w-5 h-0.5 bg-[#EF9F27] rounded" style={{ borderTop: '2px dashed #EF9F27', height: 0 }} />
+          <div className="flex items-center gap-2 mb-3">
+            <span className="inline-block w-5" style={{ borderTop: '2px dashed #EF9F27', height: 0 }} />
             <div className="text-[11px] font-medium text-[#7A3800]">比較スコア（以前）</div>
             <button onClick={resetCompare} className="ml-auto text-[10px] text-[#aaa] border border-[#e0ddd6] px-2 py-0.5 rounded cursor-pointer bg-white hover:bg-[#f7f6f3]">リセット</button>
+          </div>
+          <div className="flex flex-wrap gap-2 mb-3">
+            <div className="flex-1 min-w-[160px]">
+              <div className="text-[10px] text-[#aaa] mb-1">会社名（比較）</div>
+              <input
+                value={compareCompany}
+                onChange={(e) => setCompareCompany(e.target.value)}
+                placeholder="例：株式会社〇〇"
+                className="w-full px-2.5 py-1.5 border border-[#e0ddd6] rounded-lg text-[12px] outline-none focus:border-[#EF9F27]"
+              />
+            </div>
+            <div>
+              <div className="text-[10px] text-[#aaa] mb-1">スコアリング日（比較）</div>
+              <input
+                type="date"
+                value={compareDate}
+                onChange={(e) => setCompareDate(e.target.value)}
+                className="px-2.5 py-1.5 border border-[#e0ddd6] rounded-lg text-[12px] outline-none focus:border-[#EF9F27] bg-white"
+              />
+            </div>
           </div>
           {/* 比較ヘッダー */}
           <div className="grid mb-1" style={{ gridTemplateColumns: COL_TEMPLATE }}>
@@ -291,7 +340,14 @@ export default function ScoringTab({ scores, onChange }: Props) {
           <span className="text-[#aaa]">— スコアを入力するとチャートが更新されます</span>
         </div>
         <div className="flex justify-center">
-          <RadarChart scores={scores} compareScores={showCompare ? compareScores : undefined} />
+          <RadarChart
+            scores={scores}
+            company={company || undefined}
+            date={date || undefined}
+            compareScores={showCompare ? compareScores : undefined}
+            compareCompany={showCompare ? (compareCompany || undefined) : undefined}
+            compareDate={showCompare ? (compareDate || undefined) : undefined}
+          />
         </div>
       </div>
 

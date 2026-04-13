@@ -6,6 +6,10 @@ import type { ScoreValue } from '@/types'
 interface Props {
   scores: ScoreValue[]
   compareScores?: ScoreValue[]
+  company?: string
+  date?: string
+  compareCompany?: string
+  compareDate?: string
 }
 
 const LABELS = [
@@ -35,8 +39,18 @@ const SCORE_COL = ['#aaa', '#791F1F', '#7A5500', '#27500A', '#085041']
 const SCORE_BG  = ['#f7f6f3', '#FCEBEB', '#FFF3CC', '#EAF3DE', '#E1F5EE']
 const SCORE_TXT = ['—', 'BAD', 'SOSO', 'GOOD', 'EXC']
 
-export default function RadarChart({ scores, compareScores }: Props) {
+export default function RadarChart({ scores, compareScores, company, date, compareCompany, compareDate }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
+
+  const handleDownload = () => {
+    const canvas = canvasRef.current
+    if (!canvas) return
+    const link = document.createElement('a')
+    const name = [company, date].filter(Boolean).join('_') || 'radar_chart'
+    link.download = `${name}.png`
+    link.href = canvas.toDataURL('image/png')
+    link.click()
+  }
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -188,7 +202,43 @@ export default function RadarChart({ scores, compareScores }: Props) {
         }
       }
     }
-  }, [scores, compareScores])
+    // 会社名・日付ラベル（右下）
+    const labelLines: { text: string; color: string; size: number; bold: boolean }[] = []
+    if (company || date) {
+      if (company) labelLines.push({ text: company, color: '#534AB7', size: 13, bold: true })
+      if (date)    labelLines.push({ text: date,    color: '#888',    size: 11, bold: false })
+    }
+    if (compareScores && (compareCompany || compareDate)) {
+      labelLines.push({ text: '比較', color: '#EF9F27', size: 10, bold: true })
+      if (compareCompany) labelLines.push({ text: compareCompany, color: '#EF9F27', size: 11, bold: false })
+      if (compareDate)    labelLines.push({ text: compareDate,    color: '#EF9F27', size: 10, bold: false })
+    }
+    if (labelLines.length > 0) {
+      const lineH = 16
+      const totalH = labelLines.length * lineH
+      let y = SIZE - 8 - totalH
+      labelLines.forEach(({ text, color, size, bold }) => {
+        ctx.font = `${bold ? 'bold ' : ''}${size}px sans-serif`
+        ctx.fillStyle = color
+        ctx.textAlign = 'right'
+        ctx.fillText(text, SIZE - 10, y + size)
+        y += lineH
+      })
+    }
+  }, [scores, compareScores, company, date, compareCompany, compareDate])
 
-  return <canvas ref={canvasRef} style={{ width: 520, height: 520 }} />
+  return (
+    <div className="flex flex-col items-center gap-2">
+      <canvas ref={canvasRef} style={{ width: 520, height: 520 }} />
+      <button
+        onClick={handleDownload}
+        className="text-[12px] px-4 py-1.5 border border-[#e0ddd6] rounded-lg bg-white text-[#888] hover:bg-[#f7f6f3] cursor-pointer transition-colors flex items-center gap-1.5"
+      >
+        <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+          <path d="M6.5 1v7M3.5 6l3 3 3-3M1 10v1.5A.5.5 0 001.5 12h10a.5.5 0 00.5-.5V10" stroke="#888" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
+        画像をダウンロード
+      </button>
+    </div>
+  )
 }
