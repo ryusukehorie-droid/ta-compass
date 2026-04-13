@@ -30,9 +30,9 @@ const CAT_LABEL_BG    = ['#EEEDFE', '#FAEEDA', '#E6F1FB', '#FBEAF0']
 const CAT_LABEL_TEXT  = ['経営アライン\nメント', 'オペレーション', '品質・評価', '組織・体制']
 const CAT_RANGES = [{ s: 0, e: 1 }, { s: 2, e: 6 }, { s: 7, e: 8 }, { s: 9, e: 10 }]
 
-const SCORE_COL = ['#aaa', '#791F1F', '#27500A', '#085041']
-const SCORE_BG  = ['#f7f6f3', '#FCEBEB', '#EAF3DE', '#E1F5EE']
-const SCORE_TXT = ['—', 'BAD', 'GOOD', 'EXC']
+const SCORE_COL = ['#aaa', '#791F1F', '#7A5500', '#27500A', '#085041']
+const SCORE_BG  = ['#f7f6f3', '#FCEBEB', '#FFF3CC', '#EAF3DE', '#E1F5EE']
+const SCORE_TXT = ['—', 'BAD', 'SOSO', 'GOOD', 'EXC']
 
 export default function RadarChart({ scores }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -65,14 +65,14 @@ export default function RadarChart({ scores }: Props) {
       ctx.strokeStyle = CAT_STROKE[ci]; ctx.lineWidth = 1.5; ctx.stroke()
     }
 
-    // Grid rings
-    for (let r = 1; r <= 3; r++) {
+    // Grid rings (4段階対応)
+    for (let r = 1; r <= 4; r++) {
       ctx.beginPath()
-      for (let i = 0; i < n; i++) { const p = ptR(i, R * r / 3); i === 0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y) }
+      for (let i = 0; i < n; i++) { const p = ptR(i, R * r / 4); i === 0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y) }
       ctx.closePath()
-      ctx.strokeStyle = r === 3 ? '#ccc' : '#e8e6e0'; ctx.lineWidth = r === 3 ? 1.5 : 0.8; ctx.stroke()
+      ctx.strokeStyle = r === 4 ? '#ccc' : '#e8e6e0'; ctx.lineWidth = r === 4 ? 1.5 : 0.8; ctx.stroke()
       ctx.fillStyle = '#bbb'; ctx.font = '10px sans-serif'; ctx.textAlign = 'center'
-      ctx.fillText(String(r), cx + 4, cy - R * r / 3 - 4)
+      ctx.fillText(String(r), cx + 4, cy - R * r / 4 - 4)
     }
 
     // Spokes
@@ -102,7 +102,7 @@ export default function RadarChart({ scores }: Props) {
       ctx.beginPath()
       for (let i = 0; i < n; i++) {
         const v = scores[i] > 0 ? scores[i] : 0
-        const p = ptR(i, R * v / 3)
+        const p = ptR(i, R * v / 4)
         i === 0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y)
       }
       ctx.closePath()
@@ -110,7 +110,7 @@ export default function RadarChart({ scores }: Props) {
       ctx.strokeStyle = '#534AB7'; ctx.lineWidth = 2.5; ctx.stroke()
       for (let i = 0; i < n; i++) {
         if (scores[i] > 0) {
-          const p = ptR(i, R * scores[i] / 3)
+          const p = ptR(i, R * scores[i] / 4)
           ctx.beginPath(); ctx.arc(p.x, p.y, 5, 0, Math.PI * 2)
           ctx.fillStyle = '#534AB7'; ctx.fill(); ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.stroke()
         }

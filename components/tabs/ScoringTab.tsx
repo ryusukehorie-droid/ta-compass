@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, type ReactNode } from 'react'
 import { ITEMS, CATS, getLevelLabel } from '@/lib/data'
 import RadarChart from '@/components/RadarChart'
 import type { ScoreValue, KnowledgeEntry } from '@/types'
@@ -123,7 +123,7 @@ export default function ScoringTab({ scores, onChange }: Props) {
   const reset = () => onChange(new Array(ITEMS.length).fill(0) as ScoreValue[])
 
   let prevCat = -1
-  const rows: React.ReactNode[] = []
+  const rows: ReactNode[] = []
   ITEMS.forEach((it, i) => {
     if (it.cat !== prevCat) {
       rows.push(
