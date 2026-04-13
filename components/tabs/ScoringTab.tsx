@@ -97,6 +97,12 @@ interface Props {
 }
 
 export default function ScoringTab({ scores, onChange }: Props) {
+  // 比較モード
+  const [showCompare, setShowCompare] = useState(false)
+  const [compareScores, setCompareScores] = useState<ScoreValue[]>(
+    new Array(ITEMS.length).fill(0) as ScoreValue[]
+  )
+
   const totals: number[] = [0, 0, 0, 0]
   const counts: number[] = [0, 0, 0, 0]
   let grand = 0
@@ -120,7 +126,13 @@ export default function ScoringTab({ scores, onChange }: Props) {
     next[i] = v
     onChange(next)
   }
+  const setCompare = (i: number, v: ScoreValue) => {
+    const next = [...compareScores] as ScoreValue[]
+    next[i] = v
+    setCompareScores(next)
+  }
   const reset = () => onChange(new Array(ITEMS.length).fill(0) as ScoreValue[])
+  const resetCompare = () => setCompareScores(new Array(ITEMS.length).fill(0) as ScoreValue[])
 
   let prevCat = -1
   const rows: ReactNode[] = []
@@ -163,25 +175,70 @@ export default function ScoringTab({ scores, onChange }: Props) {
 
   return (
     <div>
-      <div className="text-[11px] font-medium tracking-widest text-[#888] uppercase mb-3">
-        スコアリングシート — BAD=1 / SOSO=2 / GOOD=3 / EXCELLENT=4
+      <div className="flex items-center justify-between mb-3">
+        <div className="text-[11px] font-medium tracking-widest text-[#888] uppercase">
+          スコアリングシート — BAD=1 / SOSO=2 / GOOD=3 / EXCELLENT=4
+        </div>
+        <button
+          onClick={() => setShowCompare(!showCompare)}
+          className={`text-[11px] font-medium px-3 py-1.5 rounded-lg border cursor-pointer transition-colors ${
+            showCompare
+              ? 'bg-[#FFF3E0] text-[#7A3800] border-[#EF9F27]'
+              : 'bg-white text-[#888] border-[#e0ddd6] hover:border-[#aaa]'
+          }`}
+        >
+          {showCompare ? '比較モード ON' : '比較モードをON'}
+        </button>
       </div>
 
-      {/* ヘッダー */}
+      {/* 現在スコア ヘッダー */}
       <div className="grid mb-1" style={{ gridTemplateColumns: COL_TEMPLATE }}>
         <div className="text-[11px] font-medium text-[#888] px-2 py-1">診断項目</div>
         {SCORE_COLS.map(({ v, label, color }) => (
-          <div
-            key={v}
-            className="text-[11px] font-medium py-1 text-center whitespace-pre-line leading-tight"
-            style={{ color }}
-          >
+          <div key={v} className="text-[11px] font-medium py-1 text-center whitespace-pre-line leading-tight" style={{ color }}>
             {label}
           </div>
         ))}
       </div>
 
       {rows}
+
+      {/* 比較スコア（beforeテーブル） */}
+      {showCompare && (
+        <div className="mt-5">
+          <div className="flex items-center gap-2 mb-2">
+            <span className="inline-block w-5 h-0.5 bg-[#EF9F27] rounded" style={{ borderTop: '2px dashed #EF9F27', height: 0 }} />
+            <div className="text-[11px] font-medium text-[#7A3800]">比較スコア（以前）</div>
+            <button onClick={resetCompare} className="ml-auto text-[10px] text-[#aaa] border border-[#e0ddd6] px-2 py-0.5 rounded cursor-pointer bg-white hover:bg-[#f7f6f3]">リセット</button>
+          </div>
+          {/* 比較ヘッダー */}
+          <div className="grid mb-1" style={{ gridTemplateColumns: COL_TEMPLATE }}>
+            <div className="text-[11px] font-medium text-[#aaa] px-2 py-1">診断項目</div>
+            {SCORE_COLS.map(({ v, label }) => (
+              <div key={v} className="text-[11px] font-medium py-1 text-center whitespace-pre-line leading-tight text-[#aaa]">{label}</div>
+            ))}
+          </div>
+          {/* 比較行 */}
+          {ITEMS.map((it, i) => (
+            <div key={i} className="grid border-b border-[#f0ede8] items-center hover:bg-[#fffdf5]" style={{ gridTemplateColumns: COL_TEMPLATE }}>
+              <div className="px-2 py-1.5 text-[12px] leading-snug text-[#aaa]">
+                <span className="text-[10px] mr-1">{String(i + 1).padStart(2, '0')}.</span>{it.name}
+              </div>
+              {SCORE_COLS.map(({ v }) => (
+                <div key={v} className="flex justify-center py-1.5">
+                  <input
+                    type="radio"
+                    name={`cmp${i}`}
+                    checked={compareScores[i] === v}
+                    onChange={() => setCompare(i, v)}
+                    className="w-[15px] h-[15px] cursor-pointer accent-[#EF9F27]"
+                  />
+                </div>
+              ))}
+            </div>
+          ))}
+        </div>
+      )}
 
       {/* スコアサマリー */}
       <div className="mt-4 bg-[#f7f6f3] rounded-xl p-4">
@@ -224,12 +281,17 @@ export default function ScoringTab({ scores, onChange }: Props) {
         <div className="text-[11px] font-medium tracking-widest text-[#888] uppercase mb-3">レーダーチャート</div>
         <div className="flex gap-4 items-center mb-3 text-[11px] text-[#888] flex-wrap">
           <span className="flex items-center gap-1.5">
-            <span className="inline-block w-6 h-0.5 bg-[#534AB7] rounded" />現在のスコア
+            <span className="inline-block w-6 h-0.5 bg-[#534AB7] rounded" />現在
           </span>
+          {showCompare && (
+            <span className="flex items-center gap-1.5">
+              <span className="inline-block w-6" style={{ borderTop: '2px dashed #EF9F27' }} />以前（比較）
+            </span>
+          )}
           <span className="text-[#aaa]">— スコアを入力するとチャートが更新されます</span>
         </div>
         <div className="flex justify-center">
-          <RadarChart scores={scores} />
+          <RadarChart scores={scores} compareScores={showCompare ? compareScores : undefined} />
         </div>
       </div>
 

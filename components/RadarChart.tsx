@@ -5,6 +5,7 @@ import type { ScoreValue } from '@/types'
 
 interface Props {
   scores: ScoreValue[]
+  compareScores?: ScoreValue[]
 }
 
 const LABELS = [
@@ -34,7 +35,7 @@ const SCORE_COL = ['#aaa', '#791F1F', '#7A5500', '#27500A', '#085041']
 const SCORE_BG  = ['#f7f6f3', '#FCEBEB', '#FFF3CC', '#EAF3DE', '#E1F5EE']
 const SCORE_TXT = ['—', 'BAD', 'SOSO', 'GOOD', 'EXC']
 
-export default function RadarChart({ scores }: Props) {
+export default function RadarChart({ scores, compareScores }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
   useEffect(() => {
@@ -167,7 +168,27 @@ export default function RadarChart({ scores }: Props) {
       ctx.fillStyle = CAT_LABEL_COLOR[ci]; ctx.textAlign = 'center'
       clines.forEach((l, li) => ctx.fillText(l, bx2 + bw2 / 2, cby + li * clh))
     }
-  }, [scores])
+    // Compare polygon (before)
+    if (compareScores && compareScores.some((v) => v > 0)) {
+      ctx.beginPath()
+      for (let i = 0; i < n; i++) {
+        const v = compareScores[i] > 0 ? compareScores[i] : 0
+        const p = ptR(i, R * v / 4)
+        i === 0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y)
+      }
+      ctx.closePath()
+      ctx.fillStyle = 'rgba(239,159,39,0.12)'; ctx.fill()
+      ctx.strokeStyle = '#EF9F27'; ctx.lineWidth = 2; ctx.setLineDash([5, 4]); ctx.stroke()
+      ctx.setLineDash([])
+      for (let i = 0; i < n; i++) {
+        if (compareScores[i] > 0) {
+          const p = ptR(i, R * compareScores[i] / 4)
+          ctx.beginPath(); ctx.arc(p.x, p.y, 4, 0, Math.PI * 2)
+          ctx.fillStyle = '#EF9F27'; ctx.fill(); ctx.strokeStyle = '#fff'; ctx.lineWidth = 1.5; ctx.stroke()
+        }
+      }
+    }
+  }, [scores, compareScores])
 
   return <canvas ref={canvasRef} style={{ width: 520, height: 520 }} />
 }
