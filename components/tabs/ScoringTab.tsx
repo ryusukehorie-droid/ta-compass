@@ -6,7 +6,7 @@ import RadarChart from '@/components/RadarChart'
 import type { ScoreValue, KnowledgeEntry } from '@/types'
 
 // 4段階 × 11項目 = 44点満点
-const CAT_MAX = [8, 20, 8, 8]
+const CAT_MAX = [8, 12, 12, 12]
 const SCORE_LEVEL_MAP = ['', 'BAD', 'SOSO', 'GOOD', 'EXC'] as const
 
 // ヘッダー列定義（値, ラベル, 色）

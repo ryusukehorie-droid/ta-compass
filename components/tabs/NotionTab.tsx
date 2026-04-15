@@ -7,7 +7,7 @@ import type { ScoreValue, NotionSavePayload } from '@/types'
 const SCORE_LABEL = ['未評価', 'BAD', 'SOSO', 'GOOD', 'EXC'] as const
 const SCORE_COL   = ['#aaa', '#791F1F', '#7A5500', '#27500A', '#085041']
 const SCORE_BG    = ['#f7f6f3', '#FCEBEB', '#FFF3CC', '#EAF3DE', '#E1F5EE']
-const CAT_MAX     = [8, 20, 8, 8]
+const CAT_MAX     = [8, 12, 12, 12]
 
 interface Props {
   scores: ScoreValue[]
@@ -57,9 +57,9 @@ export default function NotionTab({ scores }: Props) {
       scores: scoreMap,
       catScores: {
         経営アラインメント: totals[0],
-        オペレーション: totals[1],
-        '品質・評価': totals[2],
-        '組織・体制': totals[3],
+        'マーケティング＆ソーシング': totals[1],
+        'セレクション＆クロージング': totals[2],
+        'TA体制・システム': totals[3],
       },
     }
 

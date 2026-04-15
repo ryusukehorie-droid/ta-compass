@@ -1,6 +1,6 @@
 import type { DiagItem, CaseEntry, CompanyName } from '@/types'
 
-export const CATS = ['経営アラインメント', 'オペレーション', '品質・評価', '組織・体制'] as const
+export const CATS = ['経営アラインメント', 'マーケティング＆ソーシング', 'セレクション＆クロージング', 'TA体制・システム'] as const
 
 // Tailwind-safe pill color classes
 export const CAT_PILL: Record<number, { bg: string; text: string }> = {
@@ -87,7 +87,7 @@ export const ITEMS: DiagItem[] = [
     intent: '採用を「ポジションが空いてから探す」のではなく「常に良い人材と接点を持ち続ける」という能動的な姿勢があるか。',
   },
   {
-    cat: 1,
+    cat: 2,
     name: 'アトラクト＆エンゲージ',
     sub: '候補者を惹きつけ、意欲を高め続ける力',
     bad: '候補者への魅力づけが属人的で再現性がない。選考中に候補者の温度感が下がっても気づかない・対処できない',
@@ -102,7 +102,7 @@ export const ITEMS: DiagItem[] = [
     intent: '候補者を「評価する側」として受け身になっていないか。優秀な候補者ほど複数社から声がかかっており、選ばれるための能動的な魅力づけができているかが問われる。',
   },
   {
-    cat: 1,
+    cat: 2,
     name: 'プロセス・マネジメント',
     sub: '選考プロセス全体の質とスピード',
     bad: '選考の設計が場当たり的で、プロセス全体の一貫性・質・スピードが低い。候補者に「この会社は大丈夫か」と思わせてしまっている',
@@ -132,7 +132,7 @@ export const ITEMS: DiagItem[] = [
     intent: '評価の構造化に加え「誰が評価するか」を確認する。採用の意思決定がHR任せになっていないか。',
   },
   {
-    cat: 2,
+    cat: 3,
     name: 'データ活用と改善サイクル',
     sub: '計測→分析→改善行動の一貫性',
     bad: '採用KPIを定義・計測していない。採用プロセスの振り返りもない',

@@ -26,14 +26,14 @@ const LABELS = [
   'TAカルチャー',
 ]
 
-const ITEM_CATS = [0, 0, 1, 1, 1, 1, 1, 2, 2, 3, 3]
+const ITEM_CATS = [0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 3]
 
 const CAT_FILL   = ['rgba(83,74,183,0.12)', 'rgba(239,159,39,0.12)', 'rgba(55,138,221,0.12)', 'rgba(212,83,126,0.12)']
 const CAT_STROKE = ['#534AB7', '#EF9F27', '#185FA5', '#D4537E']
 const CAT_LABEL_COLOR = ['#3C3489', '#633806', '#0C447C', '#72243E']
 const CAT_LABEL_BG    = ['#EEEDFE', '#FAEEDA', '#E6F1FB', '#FBEAF0']
-const CAT_LABEL_TEXT  = ['経営アライン\nメント', 'オペレーション', '品質・評価', '組織・体制']
-const CAT_RANGES = [{ s: 0, e: 1 }, { s: 2, e: 6 }, { s: 7, e: 8 }, { s: 9, e: 10 }]
+const CAT_LABEL_TEXT  = ['経営アライン\nメント', 'マーケティング\n&ソーシング', 'セレクション\n&クロージング', 'TA体制・\nシステム']
+const CAT_RANGES = [{ s: 0, e: 1 }, { s: 2, e: 4 }, { s: 5, e: 7 }, { s: 8, e: 10 }]
 
 const SCORE_COL = ['#aaa', '#791F1F', '#7A5500', '#27500A', '#085041']
 const SCORE_BG  = ['#f7f6f3', '#FCEBEB', '#FFF3CC', '#EAF3DE', '#E1F5EE']
@@ -164,7 +164,7 @@ export default function RadarChart({ scores, compareScores, company, date, compa
     // cat0(items0-1): 時計回りにシフトして項目ラベルとの重なりを回避
     // cat1(items2-6): 中点がちょうどitem4(パイプライン)の軸上に来るため時計回りにシフト
     const step = (Math.PI * 2) / n
-    const CAT_ANG_OFFSET = [step * 0.18, step * 0.6, 0, 0]
+    const CAT_ANG_OFFSET = [step * 0.18, step * 0.5, -step * 0.5, step * 0.5]
     const clR = sR2 + 28
     for (let ci = 0; ci < 4; ci++) {
       const { s, e } = CAT_RANGES[ci]
