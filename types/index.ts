@@ -69,8 +69,8 @@ export interface NotionSavePayload {
   scores: Record<string, string>
   catScores: {
     経営アラインメント: number
-    オペレーション: number
-    '品質・評価': number
-    '組織・体制': number
+    'マーケティング＆ソーシング': number
+    'セレクション＆クロージング': number
+    'TA体制・システム': number
   }
 }
