@@ -90,6 +90,44 @@ function RelatedKnowledge({ scores }: { scores: ScoreValue[] }) {
   )
 }
 
+// 成熟度詳細パネル
+const MATURITY_LEVELS = [
+  { key: 'bad',  label: 'BAD',       bg: '#FCEBEB', color: '#791F1F', score: 1 },
+  { key: 'soso', label: 'SOSO',      bg: '#FFF3CC', color: '#7A5500', score: 2 },
+  { key: 'good', label: 'GOOD',      bg: '#EAF3DE', color: '#27500A', score: 3 },
+  { key: 'exc',  label: 'EXCELLENT', bg: '#E1F5EE', color: '#085041', score: 4 },
+] as const
+
+function MaturityDetail({ item, currentScore }: { item: typeof ITEMS[0]; currentScore: ScoreValue }) {
+  return (
+    <div className="col-span-6 bg-[#fafaf8] border-b border-[#e8e6e0] px-3 py-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+        {MATURITY_LEVELS.map(({ key, label, bg, color, score }) => {
+          const isSelected = currentScore === score
+          return (
+            <div
+              key={key}
+              className="rounded-lg p-2.5 text-[11px] leading-snug border transition-all"
+              style={{
+                background: bg,
+                color,
+                borderColor: isSelected ? color : 'transparent',
+                boxShadow: isSelected ? `0 0 0 1.5px ${color}` : 'none',
+                opacity: currentScore > 0 && !isSelected ? 0.55 : 1,
+              }}
+            >
+              <span className="font-bold text-[10px] block mb-0.5">
+                {isSelected ? `▶ ${label}（現在）` : label}
+              </span>
+              {item[key]}
+            </div>
+          )
+        })}
+      </div>
+    </div>
+  )
+}
+
 // ── メイン ────────────────────────────────────────────────────────
 interface Props {
   scores: ScoreValue[]
@@ -101,6 +139,9 @@ export default function ScoringTab({ scores, onChange }: Props) {
   const today = new Date().toISOString().slice(0, 10)
   const [company, setCompany] = useState('')
   const [date, setDate] = useState(today)
+
+  // 展開中の項目
+  const [expandedItem, setExpandedItem] = useState<number | null>(null)
 
   // 比較モード
   const [showCompare, setShowCompare] = useState(false)
@@ -141,6 +182,8 @@ export default function ScoringTab({ scores, onChange }: Props) {
   const reset = () => onChange(new Array(ITEMS.length).fill(0) as ScoreValue[])
   const resetCompare = () => setCompareScores(new Array(ITEMS.length).fill(0) as ScoreValue[])
 
+  const toggleExpand = (i: number) => setExpandedItem(expandedItem === i ? null : i)
+
   let prevCat = -1
   const rows: ReactNode[] = []
   ITEMS.forEach((it, i) => {
@@ -154,19 +197,23 @@ export default function ScoringTab({ scores, onChange }: Props) {
       )
       prevCat = it.cat
     }
+    const isOpen = expandedItem === i
     rows.push(
-      <div
-        key={i}
-        className="grid border-b border-[#f0ede8] items-center hover:bg-[#fafaf8]"
-        style={{ gridTemplateColumns: COL_TEMPLATE }}
-      >
-        <div className="px-2 py-1.5 text-[12px] leading-snug">
-          <span className="text-[10px] text-[#aaa] mr-1">{String(i + 1).padStart(2, '0')}.</span>
-          {it.name}
-          <div className="text-[10px] text-[#aaa] mt-0.5">{it.sub}</div>
+      <div key={i} className="grid border-b border-[#f0ede8]" style={{ gridTemplateColumns: COL_TEMPLATE }}>
+        {/* 項目名（クリックで展開） */}
+        <div
+          className="px-2 py-1.5 text-[12px] leading-snug cursor-pointer hover:bg-[#f0effe] select-none flex items-start gap-1"
+          onClick={() => toggleExpand(i)}
+        >
+          <span className="text-[10px] text-[#aaa] mt-0.5 shrink-0">{String(i + 1).padStart(2, '0')}.</span>
+          <span className="flex-1">
+            {it.name}
+            <div className="text-[10px] text-[#aaa] mt-0.5">{it.sub}</div>
+          </span>
+          <span className="text-[10px] text-[#bbb] mt-0.5 shrink-0 ml-1">{isOpen ? '▲' : '▼'}</span>
         </div>
         {SCORE_COLS.map(({ v }) => (
-          <div key={v} className="flex justify-center py-1.5">
+          <div key={v} className="flex justify-center py-1.5 items-center">
             <input
               type="radio"
               name={`r${i}`}
@@ -176,6 +223,8 @@ export default function ScoringTab({ scores, onChange }: Props) {
             />
           </div>
         ))}
+        {/* 展開パネル */}
+        {isOpen && <MaturityDetail item={it} currentScore={scores[i]} />}
       </div>
     )
   })
