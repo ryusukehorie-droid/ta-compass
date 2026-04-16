@@ -5,7 +5,7 @@ export default function MaturityTab() {
   return (
     <div>
       <div className="text-[11px] font-medium tracking-widest text-[#888] uppercase mb-4">
-        成熟度マップ — BAD / SOSO / GOOD / EXCELLENT の定義（4段階）
+        成熟度マップ — Entry / Developing / Standard / Excellent の定義（4段階）
       </div>
 
       {/* overflow-y-auto + max-h で sticky header が機能する */}
@@ -20,16 +20,16 @@ export default function MaturityTab() {
                 カテゴリ
               </th>
               <th className="py-2 px-2 text-left font-medium text-[#888] border-b border-[#e0ddd6] bg-[#f7f6f3] w-[18%]">
-                <span className="inline-block bg-[#FCEBEB] text-[#791F1F] rounded px-1.5 py-0.5">BAD（Lv.1）</span>
+                <span className="inline-block bg-[#FCEBEB] text-[#791F1F] rounded px-1.5 py-0.5">Entry（Lv.1）</span>
               </th>
               <th className="py-2 px-2 text-left font-medium text-[#888] border-b border-[#e0ddd6] bg-[#f7f6f3] w-[18%]">
-                <span className="inline-block bg-[#FFF3CC] text-[#7A5500] rounded px-1.5 py-0.5">SOSO（Lv.2）</span>
+                <span className="inline-block bg-[#FFF3CC] text-[#7A5500] rounded px-1.5 py-0.5">Developing（Lv.2）</span>
               </th>
               <th className="py-2 px-2 text-left font-medium text-[#888] border-b border-[#e0ddd6] bg-[#f7f6f3] w-[21%]">
-                <span className="inline-block bg-[#EAF3DE] text-[#27500A] rounded px-1.5 py-0.5">GOOD（Lv.3）</span>
+                <span className="inline-block bg-[#EAF3DE] text-[#27500A] rounded px-1.5 py-0.5">Standard（Lv.3）</span>
               </th>
               <th className="py-2 px-2 text-left font-medium text-[#888] border-b border-[#e0ddd6] bg-[#f7f6f3] w-[21%]">
-                <span className="inline-block bg-[#E1F5EE] text-[#085041] rounded px-1.5 py-0.5">EXCELLENT（Lv.4）</span>
+                <span className="inline-block bg-[#E1F5EE] text-[#085041] rounded px-1.5 py-0.5">Excellent（Lv.4）</span>
               </th>
             </tr>
           </thead>

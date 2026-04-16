@@ -5,7 +5,7 @@ import type { KnowledgeEntry, KnowledgeCreatePayload, DiagLevel, KnowledgeType }
 const DB_NAME = 'TAナレッジDB'
 
 const KNOWLEDGE_TYPES: KnowledgeType[] = ['事例', '施策・アクション', '参考記事', '独自知見']
-const DIAG_LEVELS: DiagLevel[] = ['BAD', 'SOSO', 'GOOD', 'EXC']
+const DIAG_LEVELS: DiagLevel[] = ['Entry', 'Developing', 'Standard', 'Excellent']
 const ITEM_NAMES = ITEMS.map((it) => it.name)
 
 function client() {

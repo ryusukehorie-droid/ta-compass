@@ -17,11 +17,11 @@ ${ITEM_NAMES.join('\n')}
 - 参考記事: 採用に関する参考記事・情報
 - 独自知見: 実務から得た独自の知見・ノウハウ
 
-### 成熟度レベル（BAD→SOSO→GOOD→EXCの順）
-- BAD: 採用体制がほぼない・機能していない状態
-- SOSO: 部分的だが不十分な状態
-- GOOD: 一定水準で機能している状態
-- EXC: 業界トップクラスの採用力がある状態
+### 成熟度レベル（Entry→Developing→Standard→Excellentの順）
+- Entry: 採用体制がほぼない・機能していない状態
+- Developing: 部分的だが不十分な状態
+- Standard: 一定水準で機能している状態
+- Excellent: 業界トップクラスの採用力がある状態
 
 ## あなたの役割
 ユーザーのリクエストを解釈し、ナレッジDBへの追加を支援します。
@@ -32,7 +32,7 @@ ${ITEM_NAMES.join('\n')}
 必ず以下のJSON形式のみで返してください。
 
 追加アクションがある場合:
-{"message":"以下の内容で追加します。確認してください。","action":{"type":"add_knowledge","payload":{"title":"タイトル（40文字以内）","type":"事例","body":"本文（300文字以内）","relatedItems":[0,2],"relatedLevels":["EXC"],"company":"会社名","sourceName":"ソース名","sourceUrl":"https://...","tags":["タグ1","タグ2"]}}}
+{"message":"以下の内容で追加します。確認してください。","action":{"type":"add_knowledge","payload":{"title":"タイトル（40文字以内）","type":"事例","body":"本文（300文字以内）","relatedItems":[0,2],"relatedLevels":["Excellent"],"company":"会社名","sourceName":"ソース名","sourceUrl":"https://...","tags":["タグ1","タグ2"]}}}
 
 追加アクションがない場合:
 {"message":"返答テキスト"}

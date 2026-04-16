@@ -37,7 +37,7 @@ const CAT_RANGES = [{ s: 0, e: 1 }, { s: 2, e: 4 }, { s: 5, e: 7 }, { s: 8, e: 1
 
 const SCORE_COL = ['#aaa', '#791F1F', '#7A5500', '#27500A', '#085041']
 const SCORE_BG  = ['#f7f6f3', '#FCEBEB', '#FFF3CC', '#EAF3DE', '#E1F5EE']
-const SCORE_TXT = ['—', 'BAD', 'SOSO', 'GOOD', 'EXC']
+const SCORE_TXT = ['—', 'ENT', 'DEV', 'STD', 'EXC']
 
 export default function RadarChart({ scores, compareScores, company, date, compareCompany, compareDate }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null)

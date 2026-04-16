@@ -7,11 +7,11 @@ import type { SavedResult } from '@/types'
 
 const CAT_MAX = [8, 12, 12, 12]
 const LEVEL_COLOR: Record<string, string> = {
-  'Lv.1 リアクティブ':        '#A32D2D',
-  'Lv.1〜2 移行期':           '#7A5500',
-  'Lv.2 標準化':              '#534AB7',
-  'Lv.3 プロアクティブ移行期': '#0F6E56',
-  'Lv.3〜4 戦略的・競争優位':  '#085041',
+  'Lv.1 リアクティブ':         '#A32D2D',
+  'Lv.1〜2 移行期':            '#7A5500',
+  'Lv.2 標準化':               '#534AB7',
+  'Lv.3 プロアクティブ移行期':  '#0F6E56',
+  'Lv.3〜4 戦略的・競争優位':   '#085041',
 }
 
 interface Props {

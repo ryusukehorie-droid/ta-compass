@@ -31,7 +31,7 @@ export interface ScoreState {
 }
 
 export type KnowledgeType = '事例' | '施策・アクション' | '参考記事' | '独自知見'
-export type DiagLevel = 'BAD' | 'SOSO' | 'GOOD' | 'EXC'
+export type DiagLevel = 'Entry' | 'Developing' | 'Standard' | 'Excellent'
 
 export interface KnowledgeEntry {
   id: string

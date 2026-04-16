@@ -35,14 +35,14 @@ export default function StageTab() {
       sub: 'ハイパーグロース〜IPO準備（200名〜）',
       color: '#185FA5',
       rows: [
-        { label: '経営アラインメント', val: '6点（両項目EXC）', cls: 'bg-[#E6F1FB] text-[#0C447C]' },
+        { label: '経営アラインメント', val: '6点（両項目Excellent）', cls: 'bg-[#E6F1FB] text-[#0C447C]' },
         { label: 'オペレーション',     val: '12〜15点 /15',     cls: 'bg-[#E6F1FB] text-[#0C447C]' },
         { label: '品質・評価',         val: '5〜6点 /6',        cls: 'bg-[#E6F1FB] text-[#0C447C]' },
         { label: '組織・体制',         val: '5〜6点 /6',        cls: 'bg-[#E6F1FB] text-[#0C447C]' },
       ],
       min: '27点以上',
       ideal: '30〜33点',
-      must: '全カテゴリGOOD以上＋TAカルチャーEXC',
+      must: '全カテゴリStandard以上＋TAカルチャーExcellent',
       mustColor: '#185FA5',
     },
   ]
@@ -81,11 +81,11 @@ export default function StageTab() {
       <div className="bg-[#f7f6f3] rounded-lg px-4 py-3 text-[12px] text-[#555] leading-relaxed">
         <p className="mb-2">
           <span className="font-medium text-[#1a1a1a]">経営アラインメントの読み方：</span>
-          2項目のどちらかがBADの場合、他カテゴリのスコアに関わらず「要注意フラグ」として別途記載することを推奨。
+          2項目のどちらかがEntry（1点）の場合、他カテゴリのスコアに関わらず「要注意フラグ」として別途記載することを推奨。
         </p>
         <p>
           <span className="font-medium text-[#1a1a1a]">TAカルチャーの数値ベンチマーク：</span>
-          ナレッジワークはリファラル70%以上、LayerXはリファラル31%・SNS21%・エージェント15%。リファラルが全採用の30%未満の場合はGOOD到達を疑うべき水準。
+          ナレッジワークはリファラル70%以上、LayerXはリファラル31%・SNS21%・エージェント15%。リファラルが全採用の30%未満の場合はStandard到達を疑うべき水準。
         </p>
       </div>
     </div>

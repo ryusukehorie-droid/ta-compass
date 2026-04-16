@@ -17,15 +17,15 @@ const CARDS = [
   },
   {
     type: '活用方法',
-    title: 'BAD項目別の90日アクションプランを作る',
-    desc: '各項目でBADと診断された投資先に対して、次の90日で取れる具体的な改善アクションを項目別に整理する。',
-    prompt: 'TAレベルヘルスチェックv4でBADと診断された項目に対して、次の90日で投資先が取れる具体的な改善アクションプランを項目別に設計してください。',
+    title: 'Entry項目別の90日アクションプランを作る',
+    desc: '各項目でEntryと診断された投資先に対して、次の90日で取れる具体的な改善アクションを項目別に整理する。',
+    prompt: 'TAレベルヘルスチェックv4でEntry（Lv.1）と診断された項目に対して、次の90日で投資先が取れる具体的な改善アクションプランを項目別に設計してください。',
   },
   {
     type: 'ベンチマーク拡充',
     title: 'さらなる先進事例を調査する',
-    desc: '国内（メルカリ・SmartHR・freee）や海外（Rippling・Stripe）のTA事例をリサーチし、EXCELLENTの定義をさらに精緻化する。',
-    prompt: 'TAレベルヘルスチェックのEXCELLENT基準をさらに精緻化するために、メルカリ・SmartHR・freee・Rippling・Stripeなど先進的なTA事例をリサーチしてください。',
+    desc: '国内（メルカリ・SmartHR・freee）や海外（Rippling・Stripe）のTA事例をリサーチし、Excellentの定義をさらに精緻化する。',
+    prompt: 'TAレベルヘルスチェックのExcellent基準をさらに精緻化するために、メルカリ・SmartHR・freee・Rippling・Stripeなど先進的なTA事例をリサーチしてください。',
   },
   {
     type: '検証',

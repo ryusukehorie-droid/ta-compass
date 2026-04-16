@@ -7,7 +7,7 @@ import type { KnowledgeEntry, KnowledgeCreatePayload, KnowledgeType, DiagLevel }
 
 // ── 定数 ───────────────────────────────────────────────────────────
 const TYPES: KnowledgeType[] = ['事例', '施策・アクション', '参考記事', '独自知見']
-const LEVELS: DiagLevel[] = ['BAD', 'SOSO', 'GOOD', 'EXC']
+const LEVELS: DiagLevel[] = ['Entry', 'Developing', 'Standard', 'Excellent']
 
 const TYPE_STYLE: Record<KnowledgeType, string> = {
   '事例':         'bg-[#EEEDFE] text-[#3C3489]',
@@ -17,10 +17,10 @@ const TYPE_STYLE: Record<KnowledgeType, string> = {
 }
 
 const LEVEL_STYLE: Record<DiagLevel, string> = {
-  BAD:  'bg-[#FCEBEB] text-[#791F1F]',
-  SOSO: 'bg-[#FFF3CC] text-[#7A5500]',
-  GOOD: 'bg-[#EAF3DE] text-[#27500A]',
-  EXC:  'bg-[#E1F5EE] text-[#085041]',
+  Entry:      'bg-[#FCEBEB] text-[#791F1F]',
+  Developing: 'bg-[#FFF3CC] text-[#7A5500]',
+  Standard:   'bg-[#EAF3DE] text-[#27500A]',
+  Excellent:  'bg-[#E1F5EE] text-[#085041]',
 }
 
 // ── カード ─────────────────────────────────────────────────────────

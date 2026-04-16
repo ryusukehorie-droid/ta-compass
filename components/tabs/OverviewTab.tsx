@@ -42,7 +42,7 @@ export default function OverviewTab() {
 
       <div className="bg-[#f7f6f3] rounded-lg px-4 py-3 text-[12px] text-[#555] leading-relaxed">
         <span className="text-[#1a1a1a] font-medium">特別ルール：</span>
-        経営アラインメントのどちらか一方がBAD（1点）の場合、総合スコアに関わらず「要注意フラグ」を別途記載。
+        経営アラインメントのどちらか一方がEntry（1点）の場合、総合スコアに関わらず「要注意フラグ」を別途記載。
       </div>
     </div>
   )
