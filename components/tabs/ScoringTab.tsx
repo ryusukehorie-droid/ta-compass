@@ -1,9 +1,10 @@
 'use client'
 
-import { useState, useEffect, type ReactNode } from 'react'
+import { useState, useEffect, useRef, type ReactNode } from 'react'
 import { ITEMS, CATS, getLevelLabel } from '@/lib/data'
 import RadarChart from '@/components/RadarChart'
-import type { ScoreValue, KnowledgeEntry } from '@/types'
+import { saveResult } from '@/lib/history'
+import type { ScoreValue, KnowledgeEntry, SavedResult } from '@/types'
 
 // 4段階 × 11項目 = 44点満点
 const CAT_MAX = [8, 12, 12, 12]
@@ -132,16 +133,30 @@ function MaturityDetail({ item, currentScore }: { item: typeof ITEMS[0]; current
 interface Props {
   scores: ScoreValue[]
   onChange: (scores: ScoreValue[]) => void
+  toLoad?: { key: string; result: SavedResult } | null
 }
 
-export default function ScoringTab({ scores, onChange }: Props) {
+export default function ScoringTab({ scores, onChange, toLoad }: Props) {
   // 会社名・日付
   const today = new Date().toISOString().slice(0, 10)
   const [company, setCompany] = useState('')
   const [date, setDate] = useState(today)
 
+  // 保存ステータス
+  const [saveMsg, setSaveMsg] = useState<string | null>(null)
+  const saveMsgTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+
   // 展開中の項目
   const [expandedItem, setExpandedItem] = useState<number | null>(null)
+
+  // 外部から読み込んだ結果を反映
+  useEffect(() => {
+    if (!toLoad) return
+    setCompany(toLoad.result.company)
+    setDate(toLoad.result.date)
+    onChange(toLoad.result.scores as ScoreValue[])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [toLoad?.key])
 
   // 比較モード
   const [showCompare, setShowCompare] = useState(false)
@@ -167,6 +182,27 @@ export default function ScoringTab({ scores, onChange }: Props) {
     else if (grand <= 22) levelColor = '#7A5500'
     else if (grand <= 30) levelColor = '#534AB7'
     else levelColor = '#0F6E56'
+  }
+
+  const handleSave = () => {
+    if (!grand) {
+      setSaveMsg('⚠ スコアを入力してから保存してください')
+      return
+    }
+    const result: SavedResult = {
+      id: `${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
+      company: company.trim() || '（会社名なし）',
+      date: date || today,
+      scores: [...scores] as ScoreValue[],
+      grand,
+      level: getLevelLabel(grand),
+      catTotals: [totals[0], totals[1], totals[2], totals[3]],
+      savedAt: new Date().toISOString(),
+    }
+    saveResult(result)
+    setSaveMsg('✓ 保存しました')
+    if (saveMsgTimer.current) clearTimeout(saveMsgTimer.current)
+    saveMsgTimer.current = setTimeout(() => setSaveMsg(null), 3000)
   }
 
   const setScore = (i: number, v: ScoreValue) => {
@@ -366,12 +402,25 @@ export default function ScoringTab({ scores, onChange }: Props) {
         {warn && grand > 0 && (
           <div className="text-[11px] text-center text-[#A32D2D]">⚑ 経営アラインメント要注意</div>
         )}
-        <button
-          onClick={reset}
-          className="mt-3 w-full py-1.5 text-[12px] border border-[#ccc] rounded-lg bg-transparent text-[#888] hover:bg-[#f7f6f3] cursor-pointer"
-        >
-          リセット
-        </button>
+        <div className="mt-3 flex gap-2">
+          <button
+            onClick={handleSave}
+            className="flex-1 py-1.5 text-[12px] font-medium bg-[#1a1a1a] text-white rounded-lg hover:bg-[#333] cursor-pointer transition-colors"
+          >
+            この結果を保存
+          </button>
+          <button
+            onClick={reset}
+            className="px-4 py-1.5 text-[12px] border border-[#ccc] rounded-lg bg-transparent text-[#888] hover:bg-[#f7f6f3] cursor-pointer"
+          >
+            リセット
+          </button>
+        </div>
+        {saveMsg && (
+          <div className={`mt-2 text-[12px] text-center font-medium ${saveMsg.startsWith('✓') ? 'text-[#0F6E56]' : 'text-[#A32D2D]'}`}>
+            {saveMsg}
+          </div>
+        )}
       </div>
 
       {/* レーダーチャート */}

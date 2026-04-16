@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { ITEMS } from '@/lib/data'
-import type { ScoreValue } from '@/types'
+import type { ScoreValue, SavedResult } from '@/types'
 
 import OverviewTab   from '@/components/tabs/OverviewTab'
 import MaturityTab   from '@/components/tabs/MaturityTab'
@@ -13,6 +13,7 @@ import HearingTab    from '@/components/tabs/HearingTab'
 import KnowledgeTab  from '@/components/tabs/KnowledgeTab'
 import NotionTab     from '@/components/tabs/NotionTab'
 import NextTab       from '@/components/tabs/NextTab'
+import HistoryTab    from '@/components/tabs/HistoryTab'
 import ChatPanel     from '@/components/ChatPanel'
 
 const TABS = [
@@ -25,6 +26,7 @@ const TABS = [
   '📚 ナレッジDB',
   '💾 Notionに保存',
   '7. 次の問い',
+  '📋 履歴',
 ]
 
 export default function Home() {
@@ -32,6 +34,12 @@ export default function Home() {
   const [scores, setScores] = useState<ScoreValue[]>(
     new Array(ITEMS.length).fill(0) as ScoreValue[]
   )
+  const [toLoad, setToLoad] = useState<{ key: string; result: SavedResult } | null>(null)
+
+  const handleLoad = (result: SavedResult) => {
+    setToLoad({ key: Date.now().toString(), result })
+    setTab(3)
+  }
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-4">
@@ -74,12 +82,13 @@ export default function Home() {
       {tab === 0 && <OverviewTab />}
       {tab === 1 && <MaturityTab />}
       {tab === 2 && <CasesTab />}
-      {tab === 3 && <ScoringTab scores={scores} onChange={setScores} />}
+      {tab === 3 && <ScoringTab scores={scores} onChange={setScores} toLoad={toLoad} />}
       {tab === 4 && <StageTab />}
       {tab === 5 && <HearingTab />}
       {tab === 6 && <KnowledgeTab />}
       {tab === 7 && <NotionTab scores={scores} />}
       {tab === 8 && <NextTab />}
+      {tab === 9 && <HistoryTab onLoad={handleLoad} />}
 
       <ChatPanel />
     </div>

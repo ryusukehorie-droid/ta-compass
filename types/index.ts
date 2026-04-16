@@ -59,6 +59,17 @@ export interface KnowledgeCreatePayload {
   tags: string[]
 }
 
+export interface SavedResult {
+  id: string
+  company: string
+  date: string
+  scores: ScoreValue[]
+  grand: number
+  level: string
+  catTotals: [number, number, number, number]
+  savedAt: string  // ISO string
+}
+
 export interface NotionSavePayload {
   company: string
   stage: string
