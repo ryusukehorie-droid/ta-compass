@@ -1,11 +1,11 @@
-import { Client } from '@notionhq/client'
+﻿import { Client } from '@notionhq/client'
 import { ITEMS } from '@/lib/data'
 import type { KnowledgeEntry, KnowledgeCreatePayload, DiagLevel, KnowledgeType } from '@/types'
 
 const DB_NAME = 'TAナレッジDB'
 
 const KNOWLEDGE_TYPES: KnowledgeType[] = ['事例', '施策・アクション', '参考記事', '独自知見']
-const DIAG_LEVELS: DiagLevel[] = ['Entry', 'Developing', 'Standard', 'Excellent']
+const DIAG_LEVELS: DiagLevel[] = ['Entry', 'Basic', 'Good', 'Excellent']
 const ITEM_NAMES = ITEMS.map((it) => it.name)
 
 function client() {

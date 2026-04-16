@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState, useEffect, useRef, type ReactNode } from 'react'
 import { ITEMS, CATS, getLevelLabel } from '@/lib/data'
@@ -8,13 +8,13 @@ import type { ScoreValue, KnowledgeEntry, SavedResult } from '@/types'
 
 // 4段階 × 11項目 = 44点満点
 const CAT_MAX = [8, 12, 12, 12]
-const SCORE_LEVEL_MAP = ['', 'Entry', 'Developing', 'Standard', 'Excellent'] as const
+const SCORE_LEVEL_MAP = ['', 'Entry', 'Basic', 'Good', 'Excellent'] as const
 
 // ヘッダー列定義（値, ラベル, 色）
 const SCORE_COLS: { v: ScoreValue; label: string; color: string }[] = [
   { v: 1, label: 'Entry\n1点',      color: '#A32D2D' },
-  { v: 2, label: 'Developing\n2点', color: '#7A5500' },
-  { v: 3, label: 'Standard\n3点',   color: '#27500A' },
+  { v: 2, label: 'Basic\n2点', color: '#7A5500' },
+  { v: 3, label: 'Good\n3点',   color: '#27500A' },
   { v: 4, label: 'Excellent\n4点',  color: '#085041' },
   { v: 0, label: '未評価',    color: '#aaa'    },
 ]
@@ -52,7 +52,7 @@ function RelatedKnowledge({ scores }: { scores: ScoreValue[] }) {
   return (
     <div className="mt-6">
       <div className="text-[11px] font-medium tracking-widest text-[#888] uppercase mb-2">
-        関連ナレッジ（Entry / Developing 項目）
+        関連ナレッジ（Entry / Basic 項目）
       </div>
       <div className="flex flex-wrap gap-1.5 mb-3">
         {weakItems.map(({ v, i }) => (
@@ -94,8 +94,8 @@ function RelatedKnowledge({ scores }: { scores: ScoreValue[] }) {
 // 成熟度詳細パネル
 const MATURITY_LEVELS = [
   { key: 'bad',  label: 'Entry',      bg: '#FCEBEB', color: '#791F1F', score: 1 },
-  { key: 'soso', label: 'Developing', bg: '#FFF3CC', color: '#7A5500', score: 2 },
-  { key: 'good', label: 'Standard',   bg: '#EAF3DE', color: '#27500A', score: 3 },
+  { key: 'soso', label: 'Basic', bg: '#FFF3CC', color: '#7A5500', score: 2 },
+  { key: 'good', label: 'Good',   bg: '#EAF3DE', color: '#27500A', score: 3 },
   { key: 'exc',  label: 'Excellent',  bg: '#E1F5EE', color: '#085041', score: 4 },
 ] as const
 
@@ -291,7 +291,7 @@ export default function ScoringTab({ scores, onChange, toLoad }: Props) {
 
       <div className="flex items-center justify-between mb-3">
         <div className="text-[11px] font-medium tracking-widest text-[#888] uppercase">
-          スコアリングシート — Entry=1 / Developing=2 / Standard=3 / Excellent=4
+          スコアリングシート — Entry=1 / Basic=2 / Good=3 / Excellent=4
         </div>
         <button
           onClick={() => setShowCompare(!showCompare)}

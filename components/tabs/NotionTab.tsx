@@ -1,10 +1,10 @@
-'use client'
+﻿'use client'
 
 import { useState, useEffect } from 'react'
 import { ITEMS, CATS, getLevelLabel } from '@/lib/data'
 import type { ScoreValue, NotionSavePayload } from '@/types'
 
-const SCORE_LABEL = ['未評価', 'Entry', 'Developing', 'Standard', 'Excellent'] as const
+const SCORE_LABEL = ['未評価', 'Entry', 'Basic', 'Good', 'Excellent'] as const
 const SCORE_COL   = ['#aaa', '#791F1F', '#7A5500', '#27500A', '#085041']
 const SCORE_BG    = ['#f7f6f3', '#FCEBEB', '#FFF3CC', '#EAF3DE', '#E1F5EE']
 const CAT_MAX     = [8, 12, 12, 12]

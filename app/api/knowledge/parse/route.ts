@@ -1,10 +1,10 @@
-import { NextRequest, NextResponse } from 'next/server'
+﻿import { NextRequest, NextResponse } from 'next/server'
 import Anthropic from '@anthropic-ai/sdk'
 import { ITEMS } from '@/lib/data'
 import type { KnowledgeCreatePayload, KnowledgeType, DiagLevel } from '@/types'
 
 const KNOWLEDGE_TYPES: KnowledgeType[] = ['事例', '施策・アクション', '参考記事', '独自知見']
-const DIAG_LEVELS: DiagLevel[] = ['Entry', 'Developing', 'Standard', 'Excellent']
+const DIAG_LEVELS: DiagLevel[] = ['Entry', 'Basic', 'Good', 'Excellent']
 const ITEM_NAMES = ITEMS.map((it, i) => `${i}: ${it.name}`)
 
 const SYSTEM_PROMPT = `あなたはTAチームの採用ヘルスチェックツール用のナレッジ整理アシスタントです。
@@ -19,10 +19,10 @@ ${ITEM_NAMES.join('\n')}
 - 参考記事: 採用に関する参考になる記事・情報
 - 独自知見: 実務から得た独自の知見・ノウハウ
 
-## レベル選択肢（Entry→Developing→Standard→Excellentの成熟度）
+## レベル選択肢（Entry→Basic→Good→Excellentの成熟度）
 - Entry: 採用体制がほぼない・機能していない状態に関するもの
-- Developing: 部分的に取り組んでいるが不十分な状態に関するもの
-- Standard: 一定水準で機能している状態に関するもの
+- Basic: 部分的に取り組んでいるが不十分な状態に関するもの
+- Good: 一定水準で機能している状態に関するもの
 - Excellent: 業界トップクラスの採用力がある状態に関するもの
 
 ## 出力フォーマット（必ずこのJSONのみを返してください）
@@ -31,7 +31,7 @@ ${ITEM_NAMES.join('\n')}
   "type": "事例|施策・アクション|参考記事|独自知見",
   "body": "本文の要約・整理（300文字以内）",
   "relatedItems": [関連する診断項目のインデックス番号の配列],
-  "relatedLevels": ["Entry"|"Developing"|"Standard"|"Excellent" の配列],
+  "relatedLevels": ["Entry"|"Basic"|"Good"|"Excellent" の配列],
   "company": "会社名（わかる場合のみ、なければ空文字）",
   "sourceName": "ソース名・メディア名（わかる場合のみ、なければ空文字）",
   "sourceUrl": "URL（テキスト中にあれば抽出、なければ空文字）",

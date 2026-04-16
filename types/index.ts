@@ -1,4 +1,4 @@
-export type Category = 0 | 1 | 2 | 3
+﻿export type Category = 0 | 1 | 2 | 3
 
 export interface DiagItem {
   cat: Category
@@ -31,7 +31,7 @@ export interface ScoreState {
 }
 
 export type KnowledgeType = '事例' | '施策・アクション' | '参考記事' | '独自知見'
-export type DiagLevel = 'Entry' | 'Developing' | 'Standard' | 'Excellent'
+export type DiagLevel = 'Entry' | 'Basic' | 'Good' | 'Excellent'
 
 export interface KnowledgeEntry {
   id: string

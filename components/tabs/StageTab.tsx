@@ -1,4 +1,4 @@
-export default function StageTab() {
+﻿export default function StageTab() {
   const stages = [
     {
       name: 'シリーズA',
@@ -42,7 +42,7 @@ export default function StageTab() {
       ],
       min: '27点以上',
       ideal: '30〜33点',
-      must: '全カテゴリStandard以上＋TAカルチャーExcellent',
+      must: '全カテゴリGood以上＋TAカルチャーExcellent',
       mustColor: '#185FA5',
     },
   ]
@@ -85,7 +85,7 @@ export default function StageTab() {
         </p>
         <p>
           <span className="font-medium text-[#1a1a1a]">TAカルチャーの数値ベンチマーク：</span>
-          ナレッジワークはリファラル70%以上、LayerXはリファラル31%・SNS21%・エージェント15%。リファラルが全採用の30%未満の場合はStandard到達を疑うべき水準。
+          ナレッジワークはリファラル70%以上、LayerXはリファラル31%・SNS21%・エージェント15%。リファラルが全採用の30%未満の場合はGood到達を疑うべき水準。
         </p>
       </div>
     </div>

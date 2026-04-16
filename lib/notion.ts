@@ -1,4 +1,4 @@
-import { Client } from '@notionhq/client'
+﻿import { Client } from '@notionhq/client'
 import type { NotionSavePayload } from '@/types'
 
 const DB_NAME = 'TAヘルスチェック ナレッジDB'
@@ -38,17 +38,17 @@ async function findOrCreateDb(notion: Client): Promise<string> {
       'マーケティング＆ソーシング':     { number: { format: 'number' } },
       'セレクション＆クロージング':     { number: { format: 'number' } },
       'TA体制・システム':               { number: { format: 'number' } },
-      リーダーシップのコミットメント: { select: { options: [{ name: 'Entry' }, { name: 'Developing' }, { name: 'Standard' }, { name: 'Excellent' }, { name: '未評価' }] } },
-      '採用戦略・計画':             { select: { options: [{ name: 'Entry' }, { name: 'Developing' }, { name: 'Standard' }, { name: 'Excellent' }, { name: '未評価' }] } },
-      'ストーリー発信力':           { select: { options: [{ name: 'Entry' }, { name: 'Developing' }, { name: 'Standard' }, { name: 'Excellent' }, { name: '未評価' }] } },
-      ソーシング戦略:               { select: { options: [{ name: 'Entry' }, { name: 'Developing' }, { name: 'Standard' }, { name: 'Excellent' }, { name: '未評価' }] } },
-      'タレントパイプライン':       { select: { options: [{ name: 'Entry' }, { name: 'Developing' }, { name: 'Standard' }, { name: 'Excellent' }, { name: '未評価' }] } },
-      'アトラクト＆エンゲージ':     { select: { options: [{ name: 'Entry' }, { name: 'Developing' }, { name: 'Standard' }, { name: 'Excellent' }, { name: '未評価' }] } },
-      'プロセス・マネジメント':     { select: { options: [{ name: 'Entry' }, { name: 'Developing' }, { name: 'Standard' }, { name: 'Excellent' }, { name: '未評価' }] } },
-      アセスメント品質:             { select: { options: [{ name: 'Entry' }, { name: 'Developing' }, { name: 'Standard' }, { name: 'Excellent' }, { name: '未評価' }] } },
-      'データ活用と改善サイクル':   { select: { options: [{ name: 'Entry' }, { name: 'Developing' }, { name: 'Standard' }, { name: 'Excellent' }, { name: '未評価' }] } },
-      'TAチームの組成と配置':       { select: { options: [{ name: 'Entry' }, { name: 'Developing' }, { name: 'Standard' }, { name: 'Excellent' }, { name: '未評価' }] } },
-      TAカルチャー:                 { select: { options: [{ name: 'Entry' }, { name: 'Developing' }, { name: 'Standard' }, { name: 'Excellent' }, { name: '未評価' }] } },
+      リーダーシップのコミットメント: { select: { options: [{ name: 'Entry' }, { name: 'Basic' }, { name: 'Good' }, { name: 'Excellent' }, { name: '未評価' }] } },
+      '採用戦略・計画':             { select: { options: [{ name: 'Entry' }, { name: 'Basic' }, { name: 'Good' }, { name: 'Excellent' }, { name: '未評価' }] } },
+      'ストーリー発信力':           { select: { options: [{ name: 'Entry' }, { name: 'Basic' }, { name: 'Good' }, { name: 'Excellent' }, { name: '未評価' }] } },
+      ソーシング戦略:               { select: { options: [{ name: 'Entry' }, { name: 'Basic' }, { name: 'Good' }, { name: 'Excellent' }, { name: '未評価' }] } },
+      'タレントパイプライン':       { select: { options: [{ name: 'Entry' }, { name: 'Basic' }, { name: 'Good' }, { name: 'Excellent' }, { name: '未評価' }] } },
+      'アトラクト＆エンゲージ':     { select: { options: [{ name: 'Entry' }, { name: 'Basic' }, { name: 'Good' }, { name: 'Excellent' }, { name: '未評価' }] } },
+      'プロセス・マネジメント':     { select: { options: [{ name: 'Entry' }, { name: 'Basic' }, { name: 'Good' }, { name: 'Excellent' }, { name: '未評価' }] } },
+      アセスメント品質:             { select: { options: [{ name: 'Entry' }, { name: 'Basic' }, { name: 'Good' }, { name: 'Excellent' }, { name: '未評価' }] } },
+      'データ活用と改善サイクル':   { select: { options: [{ name: 'Entry' }, { name: 'Basic' }, { name: 'Good' }, { name: 'Excellent' }, { name: '未評価' }] } },
+      'TAチームの組成と配置':       { select: { options: [{ name: 'Entry' }, { name: 'Basic' }, { name: 'Good' }, { name: 'Excellent' }, { name: '未評価' }] } },
+      TAカルチャー:                 { select: { options: [{ name: 'Entry' }, { name: 'Basic' }, { name: 'Good' }, { name: 'Excellent' }, { name: '未評価' }] } },
       ヒアリングメモ:               { rich_text: {} },
     },
   })

@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server'
+﻿import { NextRequest, NextResponse } from 'next/server'
 import Anthropic from '@anthropic-ai/sdk'
 import { ITEMS } from '@/lib/data'
 
@@ -17,10 +17,10 @@ ${ITEM_NAMES.join('\n')}
 - 参考記事: 採用に関する参考記事・情報
 - 独自知見: 実務から得た独自の知見・ノウハウ
 
-### 成熟度レベル（Entry→Developing→Standard→Excellentの順）
+### 成熟度レベル（Entry→Basic→Good→Excellentの順）
 - Entry: 採用体制がほぼない・機能していない状態
-- Developing: 部分的だが不十分な状態
-- Standard: 一定水準で機能している状態
+- Basic: 部分的だが不十分な状態
+- Good: 一定水準で機能している状態
 - Excellent: 業界トップクラスの採用力がある状態
 
 ## あなたの役割

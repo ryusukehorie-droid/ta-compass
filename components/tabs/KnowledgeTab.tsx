@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState, useEffect, useCallback } from 'react'
 import { ITEMS, CATS } from '@/lib/data'
@@ -7,7 +7,7 @@ import type { KnowledgeEntry, KnowledgeCreatePayload, KnowledgeType, DiagLevel }
 
 // ── 定数 ───────────────────────────────────────────────────────────
 const TYPES: KnowledgeType[] = ['事例', '施策・アクション', '参考記事', '独自知見']
-const LEVELS: DiagLevel[] = ['Entry', 'Developing', 'Standard', 'Excellent']
+const LEVELS: DiagLevel[] = ['Entry', 'Basic', 'Good', 'Excellent']
 
 const TYPE_STYLE: Record<KnowledgeType, string> = {
   '事例':         'bg-[#EEEDFE] text-[#3C3489]',
@@ -18,8 +18,8 @@ const TYPE_STYLE: Record<KnowledgeType, string> = {
 
 const LEVEL_STYLE: Record<DiagLevel, string> = {
   Entry:      'bg-[#FCEBEB] text-[#791F1F]',
-  Developing: 'bg-[#FFF3CC] text-[#7A5500]',
-  Standard:   'bg-[#EAF3DE] text-[#27500A]',
+  Basic: 'bg-[#FFF3CC] text-[#7A5500]',
+  Good:   'bg-[#EAF3DE] text-[#27500A]',
   Excellent:  'bg-[#E1F5EE] text-[#085041]',
 }
 
