@@ -5,7 +5,7 @@ export default function OverviewTab() {
   return (
     <div>
       <div className="text-[11px] font-medium tracking-widest text-[#888] uppercase mb-1">
-        TAレベルヘルスチェック v4 — 11項目・33点満点
+        TAレベルヘルスチェック v4 — 11項目・44点満点
       </div>
       <p className="text-[12px] text-[#888] mb-4">4カテゴリ・11項目で投資先TAチームの成熟度を診断。</p>
 
@@ -23,16 +23,16 @@ export default function OverviewTab() {
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-4">
-        {[
-          { label: '経営アラインメント', max: 6, items: 2, cat: 0 },
-          { label: 'オペレーション',     max: 15, items: 5, cat: 1 },
-          { label: '品質・評価',         max: 6,  items: 2, cat: 2 },
-          { label: '組織・体制',         max: 6,  items: 2, cat: 3 },
-        ].map((c) => {
+        {([
+          { cat: 0, max: 8,  items: 2 },
+          { cat: 1, max: 12, items: 3 },
+          { cat: 2, max: 12, items: 3 },
+          { cat: 3, max: 12, items: 3 },
+        ] as const).map((c) => {
           const { bg, text } = CAT_PILL[c.cat]
           return (
             <div key={c.cat} className={`p-2 border border-[#e8e6e0] rounded-lg text-center ${bg}`}>
-              <div className={`text-[10px] ${text} mb-0.5`}>{c.label}</div>
+              <div className={`text-[10px] ${text} mb-0.5`}>{CATS[c.cat]}</div>
               <div className={`text-[16px] font-medium ${text}`}>{c.max}点</div>
               <div className="text-[10px] text-[#aaa]">{c.items}項目</div>
             </div>
