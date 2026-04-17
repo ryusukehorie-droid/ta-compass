@@ -1,40 +1,47 @@
 import { ITEMS, CATS, CAT_PILL } from '@/lib/data'
-import Pill from '@/components/Pill'
+
+const CAT_MAX = [8, 12, 12, 12]
+const CAT_BORDER = ['border-[#534AB7]', 'border-[#EF9F27]', 'border-[#185FA5]', 'border-[#D4537E]']
+const CAT_HEADER_BG = ['bg-[#EEEDFE]', 'bg-[#FAEEDA]', 'bg-[#E6F1FB]', 'bg-[#FBEAF0]']
 
 export default function OverviewTab() {
+  const grouped = [0, 1, 2, 3].map((cat) =>
+    ITEMS.map((it, i) => ({ ...it, idx: i })).filter((it) => it.cat === cat)
+  )
+
   return (
     <div>
       <div className="text-[11px] font-medium tracking-widest text-[#888] uppercase mb-1">
         TAレベルヘルスチェック v4 — 11項目・44点満点
       </div>
-      <p className="text-[12px] text-[#888] mb-4">4カテゴリ・11項目で投資先TAチームの成熟度を診断。</p>
+      <p className="text-[12px] text-[#888] mb-5">4カテゴリ・11項目で投資先TAチームの成熟度を診断。</p>
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2.5 mb-6">
-        {ITEMS.map((it, i) => (
-          <div key={i} className="border border-[#e8e6e0] rounded-xl p-3 bg-white">
-            <div className="text-[11px] font-medium text-[#aaa] mb-1">
-              {String(i + 1).padStart(2, '0')}{' '}
-              <Pill cat={it.cat} label={CATS[it.cat]} />
-            </div>
-            <div className="text-[13px] font-medium leading-snug mb-0.5">{it.name}</div>
-            <div className="text-[11px] text-[#888] leading-snug">{it.sub}</div>
-          </div>
-        ))}
-      </div>
-
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-4">
-        {([
-          { cat: 0, max: 8,  items: 2 },
-          { cat: 1, max: 12, items: 3 },
-          { cat: 2, max: 12, items: 3 },
-          { cat: 3, max: 12, items: 3 },
-        ] as const).map((c) => {
-          const { bg, text } = CAT_PILL[c.cat]
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
+        {grouped.map((items, cat) => {
+          const { bg, text } = CAT_PILL[cat]
           return (
-            <div key={c.cat} className={`p-2 border border-[#e8e6e0] rounded-lg text-center ${bg}`}>
-              <div className={`text-[10px] ${text} mb-0.5`}>{CATS[c.cat]}</div>
-              <div className={`text-[16px] font-medium ${text}`}>{c.max}点</div>
-              <div className="text-[10px] text-[#aaa]">{c.items}項目</div>
+            <div key={cat} className={`rounded-xl border-2 ${CAT_BORDER[cat]} overflow-hidden`}>
+              {/* カテゴリヘッダー */}
+              <div className={`${CAT_HEADER_BG[cat]} px-3 py-2 flex items-center justify-between`}>
+                <span className={`text-[12px] font-bold ${text}`}>{CATS[cat]}</span>
+                <span className={`text-[10px] font-medium ${text} opacity-70`}>
+                  {items.length}項目・{CAT_MAX[cat]}点満点
+                </span>
+              </div>
+              {/* 項目一覧 */}
+              <div className="divide-y divide-[#f0ede8] bg-white">
+                {items.map((it) => (
+                  <div key={it.idx} className="flex items-start gap-2 px-3 py-2.5">
+                    <span className="text-[10px] text-[#bbb] mt-0.5 shrink-0 w-5">
+                      {String(it.idx + 1).padStart(2, '0')}
+                    </span>
+                    <div>
+                      <div className="text-[12px] font-medium leading-snug">{it.name}</div>
+                      <div className="text-[10px] text-[#aaa] mt-0.5 leading-snug">{it.sub}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           )
         })}
