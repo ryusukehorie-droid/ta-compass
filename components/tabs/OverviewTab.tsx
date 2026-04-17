@@ -22,11 +22,8 @@ export default function OverviewTab() {
           return (
             <div key={cat} className={`rounded-xl border-2 ${CAT_BORDER[cat]} overflow-hidden`}>
               {/* カテゴリヘッダー */}
-              <div className={`${CAT_HEADER_BG[cat]} px-3 py-2 flex items-center justify-between`}>
+              <div className={`${CAT_HEADER_BG[cat]} px-3 py-2`}>
                 <span className={`text-[12px] font-bold ${text}`}>{CATS[cat]}</span>
-                <span className={`text-[10px] font-medium ${text} opacity-70`}>
-                  {items.length}項目・{CAT_MAX[cat]}点満点
-                </span>
               </div>
               {/* 項目一覧 */}
               <div className="divide-y divide-[#f0ede8] bg-white">
