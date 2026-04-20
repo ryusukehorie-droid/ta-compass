@@ -152,9 +152,19 @@ export default function ScoringTab({ scores, onChange, toLoad }: Props) {
   // 外部から読み込んだ結果を反映
   useEffect(() => {
     if (!toLoad) return
-    setCompany(toLoad.result.company)
-    setDate(toLoad.result.date)
-    onChange(toLoad.result.scores as ScoreValue[])
+    const r = toLoad.result
+    setCompany(r.company)
+    setDate(r.date)
+    onChange(r.scores as ScoreValue[])
+    if (r.compareScores && r.compareScores.some((v) => v > 0)) {
+      setShowCompare(true)
+      setCompareScores(r.compareScores as ScoreValue[])
+      setCompareCompany(r.compareCompany ?? '')
+      setCompareDate(r.compareDate ?? today)
+    } else {
+      setShowCompare(false)
+      setCompareScores(new Array(ITEMS.length).fill(0) as ScoreValue[])
+    }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [toLoad?.key])
 
@@ -189,6 +199,16 @@ export default function ScoringTab({ scores, onChange, toLoad }: Props) {
       setSaveMsg('⚠ スコアを入力してから保存してください')
       return
     }
+
+    // 比較スコアの集計
+    const cmpTotals: [number, number, number, number] = [0, 0, 0, 0]
+    let cmpGrand = 0
+    if (showCompare) {
+      compareScores.forEach((v, i) => {
+        if (v > 0) { cmpTotals[ITEMS[i].cat] += v; cmpGrand += v }
+      })
+    }
+
     const result: SavedResult = {
       id: `${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
       company: company.trim() || '（会社名なし）',
@@ -198,6 +218,14 @@ export default function ScoringTab({ scores, onChange, toLoad }: Props) {
       level: getLevelLabel(grand),
       catTotals: [totals[0], totals[1], totals[2], totals[3]],
       savedAt: new Date().toISOString(),
+      ...(showCompare && cmpGrand > 0 && {
+        compareCompany: compareCompany.trim() || undefined,
+        compareDate: compareDate || undefined,
+        compareScores: [...compareScores] as ScoreValue[],
+        compareGrand: cmpGrand,
+        compareLevel: getLevelLabel(cmpGrand),
+        compareCatTotals: cmpTotals,
+      }),
     }
     saveResult(result)
     setSaveMsg('✓ 保存しました')

@@ -71,8 +71,8 @@ export default function HistoryTab({ onLoad }: Props) {
                   </div>
                 </div>
 
-                {/* スコア */}
-                <div className="flex items-baseline gap-1.5 mb-3">
+                {/* 現在スコア */}
+                <div className="flex items-baseline gap-1.5 mb-2">
                   <span className="text-[22px] font-bold" style={{ color: levelColor }}>{r.grand}</span>
                   <span className="text-[12px] text-[#aaa]">/ 44点</span>
                   <span
@@ -95,6 +95,36 @@ export default function HistoryTab({ onLoad }: Props) {
                     </div>
                   ))}
                 </div>
+
+                {/* 比較スコア */}
+                {r.compareScores && r.compareGrand != null && (
+                  <div className="border-t border-dashed border-[#EF9F27] pt-2 mb-3">
+                    <div className="flex items-center gap-1.5 mb-1.5">
+                      <span className="inline-block w-4" style={{ borderTop: '2px dashed #EF9F27', height: 0 }} />
+                      <span className="text-[10px] font-medium text-[#7A3800]">
+                        比較: {r.compareCompany || '（会社名なし）'}
+                        {r.compareDate && <span className="text-[#aaa] ml-1">（{r.compareDate}）</span>}
+                      </span>
+                      <span
+                        className="ml-auto text-[11px] font-bold"
+                        style={{ color: LEVEL_COLOR[r.compareLevel ?? ''] ?? '#EF9F27' }}
+                      >
+                        {r.compareGrand}点
+                      </span>
+                    </div>
+                    <div className="grid grid-cols-4 gap-1">
+                      {CATS.map((name, c) => (
+                        <div key={c} className="text-center">
+                          <div className="text-[9px] text-[#aaa] leading-tight mb-0.5">{name}</div>
+                          <div className="text-[12px] font-medium text-[#EF9F27]">
+                            {r.compareCatTotals?.[c] ? r.compareCatTotals[c] : '—'}
+                            <span className="text-[9px] text-[#ccc]">/{CAT_MAX[c]}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
 
                 {/* アクション */}
                 <div className="flex gap-2">
