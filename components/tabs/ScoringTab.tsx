@@ -3,8 +3,9 @@
 import { useState, useEffect, useRef, type ReactNode } from 'react'
 import { ITEMS, CATS, getLevelLabel } from '@/lib/data'
 import RadarChart from '@/components/RadarChart'
-import { saveResult } from '@/lib/history'
 import type { ScoreValue, KnowledgeEntry, SavedResult } from '@/types'
+
+const SAVED_BY_KEY = 'ta_compass_saved_by'
 
 // 4段階 × 11項目 = 44点満点
 const CAT_MAX = [8, 12, 12, 12]
@@ -141,9 +142,18 @@ export default function ScoringTab({ scores, onChange, toLoad }: Props) {
   const today = new Date().toISOString().slice(0, 10)
   const [company, setCompany] = useState('')
   const [date, setDate] = useState(today)
+  const [savedBy, setSavedBy] = useState('')
+
+  // 保存者名はブラウザ単位で記憶（入力の手間を減らすため）
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    const v = localStorage.getItem(SAVED_BY_KEY)
+    if (v) setSavedBy(v)
+  }, [])
 
   // 保存ステータス
   const [saveMsg, setSaveMsg] = useState<string | null>(null)
+  const [saving, setSaving] = useState(false)
   const saveMsgTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   // 展開中の項目
@@ -155,6 +165,7 @@ export default function ScoringTab({ scores, onChange, toLoad }: Props) {
     const r = toLoad.result
     setCompany(r.company)
     setDate(r.date)
+    if (r.savedBy) setSavedBy(r.savedBy)
     onChange(r.scores as ScoreValue[])
     if (r.compareScores && r.compareScores.some((v) => v > 0)) {
       setShowCompare(true)
@@ -194,11 +205,12 @@ export default function ScoringTab({ scores, onChange, toLoad }: Props) {
     else levelColor = '#0F6E56'
   }
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!grand) {
       setSaveMsg('⚠ スコアを入力してから保存してください')
       return
     }
+    if (saving) return
 
     // 比較スコアの集計
     const cmpTotals: [number, number, number, number] = [0, 0, 0, 0]
@@ -210,7 +222,7 @@ export default function ScoringTab({ scores, onChange, toLoad }: Props) {
     }
 
     const result: SavedResult = {
-      id: `${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
+      id: '', // サーバ側で Notion page ID を割当
       company: company.trim() || '（会社名なし）',
       date: date || today,
       scores: [...scores] as ScoreValue[],
@@ -218,6 +230,7 @@ export default function ScoringTab({ scores, onChange, toLoad }: Props) {
       level: getLevelLabel(grand),
       catTotals: [totals[0], totals[1], totals[2], totals[3]],
       savedAt: new Date().toISOString(),
+      savedBy: savedBy.trim() || undefined,
       ...(showCompare && cmpGrand > 0 && {
         compareCompany: compareCompany.trim() || undefined,
         compareDate: compareDate || undefined,
@@ -227,10 +240,27 @@ export default function ScoringTab({ scores, onChange, toLoad }: Props) {
         compareCatTotals: cmpTotals,
       }),
     }
-    saveResult(result)
-    setSaveMsg('✓ 保存しました')
-    if (saveMsgTimer.current) clearTimeout(saveMsgTimer.current)
-    saveMsgTimer.current = setTimeout(() => setSaveMsg(null), 3000)
+
+    setSaving(true)
+    setSaveMsg(null)
+    try {
+      const res = await fetch('/api/history', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(result),
+      })
+      const data = await res.json() as { success?: boolean; error?: string }
+      if (!res.ok || !data.success) throw new Error(data.error || '保存に失敗しました')
+      if (savedBy.trim()) localStorage.setItem(SAVED_BY_KEY, savedBy.trim())
+      setSaveMsg('✓ 保存しました')
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err)
+      setSaveMsg(`⚠ ${message}`)
+    } finally {
+      setSaving(false)
+      if (saveMsgTimer.current) clearTimeout(saveMsgTimer.current)
+      saveMsgTimer.current = setTimeout(() => setSaveMsg(null), 4000)
+    }
   }
 
   const setScore = (i: number, v: ScoreValue) => {
@@ -295,7 +325,7 @@ export default function ScoringTab({ scores, onChange, toLoad }: Props) {
 
   return (
     <div>
-      {/* 会社名・日付 */}
+      {/* 会社名・日付・保存者 */}
       <div className="flex flex-wrap gap-2 mb-4">
         <div className="flex-1 min-w-[160px]">
           <div className="text-[10px] text-[#aaa] mb-1">会社名</div>
@@ -313,6 +343,15 @@ export default function ScoringTab({ scores, onChange, toLoad }: Props) {
             value={date}
             onChange={(e) => setDate(e.target.value)}
             className="px-2.5 py-1.5 border border-[#e0ddd6] rounded-lg text-[12px] outline-none focus:border-[#534AB7] bg-white"
+          />
+        </div>
+        <div className="min-w-[140px]">
+          <div className="text-[10px] text-[#aaa] mb-1">保存者</div>
+          <input
+            value={savedBy}
+            onChange={(e) => setSavedBy(e.target.value)}
+            placeholder="例：山田"
+            className="w-full px-2.5 py-1.5 border border-[#e0ddd6] rounded-lg text-[12px] outline-none focus:border-[#534AB7]"
           />
         </div>
       </div>
@@ -433,9 +472,10 @@ export default function ScoringTab({ scores, onChange, toLoad }: Props) {
         <div className="mt-3 flex gap-2">
           <button
             onClick={handleSave}
-            className="flex-1 py-1.5 text-[12px] font-medium bg-[#1a1a1a] text-white rounded-lg hover:bg-[#333] cursor-pointer transition-colors"
+            disabled={saving}
+            className="flex-1 py-1.5 text-[12px] font-medium bg-[#1a1a1a] text-white rounded-lg hover:bg-[#333] cursor-pointer transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            この結果を保存
+            {saving ? '保存中…' : 'この結果を保存'}
           </button>
           <button
             onClick={reset}

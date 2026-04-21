@@ -1,8 +1,7 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { CATS } from '@/lib/data'
-import { getHistory, deleteResult } from '@/lib/history'
 import type { SavedResult } from '@/types'
 
 const CAT_MAX = [8, 12, 12, 12]
@@ -20,39 +19,87 @@ interface Props {
 
 export default function HistoryTab({ onLoad }: Props) {
   const [history, setHistory] = useState<SavedResult[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
-  useEffect(() => {
-    setHistory(getHistory())
+  const load = useCallback(async () => {
+    setLoading(true)
+    setError(null)
+    try {
+      const res = await fetch('/api/history', { cache: 'no-store' })
+      const data = await res.json() as { entries?: SavedResult[]; error?: string }
+      if (!res.ok) throw new Error(data.error || '読み込みに失敗しました')
+      setHistory(data.entries ?? [])
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err)
+      setError(message)
+    } finally {
+      setLoading(false)
+    }
   }, [])
 
-  const handleDelete = (id: string) => {
-    if (!confirm('この保存データを削除しますか？')) return
-    deleteResult(id)
-    setHistory(getHistory())
+  useEffect(() => { load() }, [load])
+
+  const handleDelete = async (id: string) => {
+    if (!confirm('この保存データを削除しますか？（Notion 上ではアーカイブされます）')) return
+    try {
+      const res = await fetch(`/api/history/${id}`, { method: 'DELETE' })
+      const data = await res.json() as { success?: boolean; error?: string }
+      if (!res.ok || !data.success) throw new Error(data.error || '削除に失敗しました')
+      setHistory((prev) => prev.filter((r) => r.id !== id))
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err)
+      alert(`削除に失敗しました: ${message}`)
+    }
   }
 
   const formatSavedAt = (iso: string) => {
+    if (!iso) return ''
     const d = new Date(iso)
+    if (isNaN(d.getTime())) return ''
     return `${d.getFullYear()}/${String(d.getMonth() + 1).padStart(2, '0')}/${String(d.getDate()).padStart(2, '0')} ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`
   }
 
   return (
     <div>
-      <div className="text-[11px] font-medium tracking-widest text-[#888] uppercase mb-1">
-        スコアリング履歴
+      <div className="flex items-center justify-between mb-1">
+        <div className="text-[11px] font-medium tracking-widest text-[#888] uppercase">
+          スコアリング履歴（チーム共有）
+        </div>
+        <button
+          onClick={load}
+          disabled={loading}
+          className="text-[11px] text-[#888] border border-[#e0ddd6] px-2 py-0.5 rounded cursor-pointer bg-white hover:bg-[#f7f6f3] disabled:opacity-50"
+        >
+          {loading ? '更新中…' : '再読み込み'}
+        </button>
       </div>
       <p className="text-[12px] text-[#888] mb-4">
-        保存したスコアリング結果の一覧です。「読み込む」でスコアリングシートに反映できます。
+        Notion DB に保存された履歴の一覧です。チーム全員で共有されます。「読み込む」でスコアリングシートに反映できます。
       </p>
 
-      {history.length === 0 ? (
+      {loading && (
+        <div className="bg-[#f7f6f3] rounded-xl p-6 text-center text-[13px] text-[#aaa]">
+          読み込み中…
+        </div>
+      )}
+
+      {!loading && error && (
+        <div className="bg-[#FCEBEB] border border-[#F3C2C2] rounded-xl p-4 text-[12px] text-[#791F1F]">
+          読み込みに失敗しました: {error}
+        </div>
+      )}
+
+      {!loading && !error && history.length === 0 && (
         <div className="bg-[#f7f6f3] rounded-xl p-8 text-center">
           <div className="text-[14px] text-[#aaa] mb-1">保存済みの結果がありません</div>
           <div className="text-[11px] text-[#bbb]">
             スコアリングシートで入力後、「保存」ボタンを押すとここに表示されます。
           </div>
         </div>
-      ) : (
+      )}
+
+      {!loading && !error && history.length > 0 && (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {history.map((r) => {
             const levelColor = LEVEL_COLOR[r.level] ?? '#888'
@@ -64,7 +111,10 @@ export default function HistoryTab({ onLoad }: Props) {
                     <div className="text-[14px] font-bold text-[#1a1a1a] leading-tight">
                       {r.company || '（会社名なし）'}
                     </div>
-                    <div className="text-[11px] text-[#aaa] mt-0.5">ヒアリング日: {r.date}</div>
+                    <div className="text-[11px] text-[#aaa] mt-0.5">
+                      ヒアリング日: {r.date || '—'}
+                      {r.savedBy && <span className="ml-2">保存者: {r.savedBy}</span>}
+                    </div>
                   </div>
                   <div className="text-[10px] text-[#bbb] shrink-0 text-right">
                     保存: {formatSavedAt(r.savedAt)}
