@@ -135,11 +135,17 @@ export async function saveAssessment(payload: NotionSavePayload): Promise<string
 
 // ── 履歴機能 ─────────────────────────────────────────────────────
 
-// 既存 DB に履歴用カラムが無ければ追加する（冪等）
+// 既存 DB に履歴用カラム + 現行カテゴリ名カラムが無ければ追加する（冪等）
 async function ensureHistorySchema(notion: Client, dbId: string): Promise<void> {
   const db = await notion.databases.retrieve({ database_id: dbId })
   const existing = (db as { properties: Record<string, unknown> }).properties
   const toAdd: Record<string, unknown> = {}
+  // 現行カテゴリ4列（旧スキーマで作られた DB に不足している場合がある）
+  if (!existing['経営アラインメント'])               toAdd['経営アラインメント']               = { number: { format: 'number' } }
+  if (!existing['マーケティング＆ソーシング'])       toAdd['マーケティング＆ソーシング']       = { number: { format: 'number' } }
+  if (!existing['セレクション＆クロージング'])       toAdd['セレクション＆クロージング']       = { number: { format: 'number' } }
+  if (!existing['TA体制・システム'])                 toAdd['TA体制・システム']                 = { number: { format: 'number' } }
+  // 履歴用カラム
   if (!existing[HISTORY_PROP_SAVED_BY])         toAdd[HISTORY_PROP_SAVED_BY]         = { rich_text: {} }
   if (!existing[HISTORY_PROP_SCORES_JSON])      toAdd[HISTORY_PROP_SCORES_JSON]      = { rich_text: {} }
   if (!existing[HISTORY_PROP_COMPARE_JSON])     toAdd[HISTORY_PROP_COMPARE_JSON]     = { rich_text: {} }
