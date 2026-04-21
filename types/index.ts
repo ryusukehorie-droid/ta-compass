@@ -68,6 +68,7 @@ export interface SavedResult {
   level: string
   catTotals: [number, number, number, number]
   savedAt: string  // ISO string
+  savedBy?: string
   // 比較モード（省略可）
   compareCompany?: string
   compareDate?: string
